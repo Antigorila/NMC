@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="NMC.ApiService/NMC.ApiService.csproj" />
+  <Project Path="NMC.AppHost/NMC.AppHost.csproj" />
+  <Project Path="NMC.ServiceDefaults/NMC.ServiceDefaults.csproj" />
+  <Project Path="NMC.Web/NMC.Web.csproj" />
+</Solution>
