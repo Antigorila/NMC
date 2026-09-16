@@ -11,6 +11,13 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+//Database initialization
+var connectionString = app.Configuration.GetConnectionString("NmcDb");
+if (!string.IsNullOrEmpty(connectionString))
+{
+    NMC.DataAccess.DbInitializer.InitializeDatabase(connectionString);
+}
+
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
 

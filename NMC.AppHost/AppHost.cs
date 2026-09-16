@@ -1,12 +1,16 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var apiService = builder.AddProject<Projects.NMC_ApiService>("apiservice")
-    .WithHttpHealthCheck("/health");
+var password = builder.AddParameter("sql-password", "NMC-Database-Password123", secret: true);
 
-builder.AddProject<Projects.NMC_Web>("webfrontend")
-    .WithExternalHttpEndpoints()
-    .WithHttpHealthCheck("/health")
-    .WithReference(apiService)
-    .WaitFor(apiService);
+var sqlServer = builder.AddSqlServer("sqlserver", password)
+                       .WithImage("mssql/server", "2019-latest")
+                       .WithHostPort(1433)
+                       .WithDataVolume();
+
+var database = sqlServer.AddDatabase("NmcDb");
+
+builder.AddProject<Projects.NMC_ApiService>("nmc-api-service")
+       .WithReference(database)
+       .WaitFor(database);
 
 builder.Build().Run();
