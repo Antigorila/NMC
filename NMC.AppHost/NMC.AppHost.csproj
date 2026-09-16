@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.5.3">
+﻿<Project Sdk="Aspire.AppHost.Sdk/13.5.3">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,6 +8,10 @@
     <AspireUseCliBundle>true</AspireUseCliBundle>
     <UserSecretsId>12200a6e-8d4f-4671-a694-989798b2f097</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.5.4" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NMC.ApiService\NMC.ApiService.csproj" />
