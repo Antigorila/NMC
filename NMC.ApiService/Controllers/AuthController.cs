@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NMC.ApiService.DTO;
 using NMC.DataAccess;
@@ -11,6 +12,7 @@ namespace NMC.ApiService.Controllers
     public class AuthController : ControllerBase
     {
         private readonly NmcDbContext _context;
+        private readonly PasswordHasher<User> _passwordHasher = new();
 
         public AuthController(NmcDbContext context)
         {
@@ -18,14 +20,15 @@ namespace NMC.ApiService.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequestDto dto)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto dto, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Password))
             {
                 return BadRequest("You must enter both the username and password.");
             }
 
-            bool userExists = await _context.Users.AnyAsync(u => u.Username == dto.Username);
+            bool userExists = await _context.Users
+                .AnyAsync(u => u.Username == dto.Username, cancellationToken);
 
             if (userExists)
             {
@@ -34,12 +37,13 @@ namespace NMC.ApiService.Controllers
 
             var user = new User
             {
-                Username = dto.Username,
-                PasswordHash = dto.Password //todo: change this to hashing in the future0
+                Username = dto.Username
             };
 
+            user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
+
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             string token = GenerateMockToken(user.Id, user.Username);
             var response = new AuthResponseDto(user.Id, user.Username, token);
@@ -48,11 +52,18 @@ namespace NMC.ApiService.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto dto, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == dto.Username);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == dto.Username, cancellationToken);
 
-            if (user == null || user.PasswordHash != dto.Password)
+            if (user == null)
+            {
+                return Unauthorized("Bad luck. Invalid username or password.");
+            }
+
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
+
+            if (result == PasswordVerificationResult.Failed)
             {
                 return Unauthorized("Bad luck. Invalid username or password.");
             }
