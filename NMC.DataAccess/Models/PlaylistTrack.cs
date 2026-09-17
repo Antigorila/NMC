@@ -8,5 +8,8 @@ namespace NMC.DataAccess.Models
     {
         public int UserTrackId { get; set; }
         public int PlaylistId { get; set; }
+
+        public UserTrack UserTrack { get; set; } = null!;
+        public Playlist Playlist { get; set; } = null!;
     }
 }

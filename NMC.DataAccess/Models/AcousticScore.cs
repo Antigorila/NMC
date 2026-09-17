@@ -10,5 +10,8 @@ namespace NMC.DataAccess.Models
         public int TrackId { get; set; }
         public int AttributeId { get; set; }
         public double Score { get; set; }
+
+        public Track Track { get; set; } = null!;
+        public AcousticAttribute Attribute { get; set; } = null!;
     }
 }

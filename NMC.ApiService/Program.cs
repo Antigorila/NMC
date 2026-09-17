@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using NMC.DataAccess;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire client integrations.
@@ -9,13 +12,16 @@ builder.Services.AddProblemDetails();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// Add database context
+builder.Services.AddDbContext<NmcDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("NmcDb")));
+
 var app = builder.Build();
 
 //Database initialization
-var connectionString = app.Configuration.GetConnectionString("NmcDb");
-if (!string.IsNullOrEmpty(connectionString))
+using (var scope = app.Services.CreateScope())
 {
-    NMC.DataAccess.DbInitializer.InitializeDatabase(connectionString);
+    var dbContext = scope.ServiceProvider.GetRequiredService<NmcDbContext>();
+    DbInitializer.Initialize(dbContext);
 }
 
 // Configure the HTTP request pipeline.
@@ -26,29 +32,4 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-string[] summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
-
-app.MapGet("/", () => "API service is running. Navigate to /weatherforecast to see sample data.");
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
-app.MapDefaultEndpoints();
-
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

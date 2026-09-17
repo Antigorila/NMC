@@ -8,5 +8,7 @@ namespace NMC.DataAccess.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+
+        public ICollection<GenreScore> GenreScores { get; set; } = new List<GenreScore>();
     }
 }

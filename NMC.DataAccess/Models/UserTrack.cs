@@ -11,5 +11,9 @@ namespace NMC.DataAccess.Models
         public int UserId { get; set; }
         public string FilePath { get; set; } = string.Empty;
         public string? CoverPath { get; set; }
+
+        public Track Track { get; set; } = null!;
+        public User User { get; set; } = null!;
+        public ICollection<PlaylistTrack> PlaylistTracks { get; set; } = new List<PlaylistTrack>();
     }
 }
