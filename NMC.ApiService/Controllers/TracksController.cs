@@ -93,7 +93,9 @@ namespace NMC.ApiService.Controllers
 
         private async Task<List<UserTrackDto>> FetchTracksByArtistAsync(int userId, string artistName)
         {
-            return await _context.UserTracks.Where(ut => ut.UserId == userId && ut.Track.Artist.Contains(artistName))
+            var lowerArtist = artistName.ToLower();
+
+            return await _context.UserTracks.Where(ut => ut.UserId == userId && ut.Track.Artist.ToLower().Contains(lowerArtist))
                 .Select(ut => new UserTrackDto(
                     ut.Id,
                     ut.TrackId,

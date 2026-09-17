@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Tests/">
+    <Project Path="ApiTests/ApiTests.csproj" Id="10ca044d-bdb7-4a42-9adb-ecafd524b0a4" />
+  </Folder>
   <Project Path="NMC.ApiService/NMC.ApiService.csproj" />
   <Project Path="NMC.AppHost/NMC.AppHost.csproj" />
   <Project Path="NMC.CNTK/NMC.CNTK.csproj" Id="5f1253a9-d7c7-419c-9f02-a168f5581d54" />
