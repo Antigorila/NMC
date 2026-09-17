@@ -25,9 +25,9 @@ namespace NMC.ApiService.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetPlaylistById(int id)
+        public async Task<IActionResult> GetPlaylistById(int id, CancellationToken cancellationToken)
         {
-            var playlist = await FetchPlaylistDetailByIdAsync(id);
+            var playlist = await FetchPlaylistDetailByIdAsync(id, cancellationToken);
 
             if (playlist == null)
             {
@@ -38,11 +38,11 @@ namespace NMC.ApiService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePlaylist([FromQuery] int userId, [FromBody] CreatePlaylistDto dto)
+        public async Task<IActionResult> CreatePlaylist([FromQuery] int userId, [FromBody] CreatePlaylistDto dto, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(dto.PlaylistName))
             {
-                return BadRequest("Nice try, but the playlist name cannot be empty.");
+                return BadRequest("And how should we call the playlist?");
             }
 
             var newPlaylist = new Playlist
@@ -53,9 +53,17 @@ namespace NMC.ApiService.Controllers
             };
 
             _context.Playlists.Add(newPlaylist);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
-            return CreatedAtAction(nameof(GetPlaylistById), new { id = newPlaylist.Id }, newPlaylist.Id);
+            var resultDto = new PlaylistDto(
+                newPlaylist.Id,
+                newPlaylist.UserId,
+                newPlaylist.PlaylistName,
+                newPlaylist.CoverPath,
+                0
+            );
+
+            return CreatedAtAction(nameof(GetPlaylistById), new { id = newPlaylist.Id }, resultDto);
         }
 
         [HttpPost("{id:int}/tracks")]
@@ -126,9 +134,10 @@ namespace NMC.ApiService.Controllers
                 )).ToListAsync();
         }
 
-        private async Task<PlaylistDetailDto?> FetchPlaylistDetailByIdAsync(int playlistId)
+        private async Task<PlaylistDetailDto?> FetchPlaylistDetailByIdAsync(int playlistId, CancellationToken cancellationToken)
         {
-            return await _context.Playlists.Where(p => p.Id == playlistId)
+            return await _context.Playlists
+                .Where(p => p.Id == playlistId)
                 .Select(p => new PlaylistDetailDto(
                     p.Id,
                     p.UserId,
@@ -141,10 +150,11 @@ namespace NMC.ApiService.Controllers
                         pt.UserTrack.Track.Artist,
                         pt.UserTrack.FilePath,
                         pt.UserTrack.CoverPath,
-                        new List<GenreScoreDto>(),
-                        new List<AcousticScoreDto>()
+                        pt.UserTrack.Track.GenreScores.Select(gs => new GenreScoreDto(gs.GenreId, gs.Genre.Name, gs.Score)).ToList(),
+                        pt.UserTrack.Track.AcousticScores.Select(acs => new AcousticScoreDto(acs.AttributeId, acs.Attribute.Name, acs.Score)).ToList()
                     )).ToList()
-                )).FirstOrDefaultAsync();
+                ))
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
         private async Task<bool> CheckTrackInPlaylistAsync(int playlistId, int userTrackId)

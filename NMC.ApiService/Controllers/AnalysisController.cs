@@ -18,9 +18,9 @@ namespace NMC.ApiService.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadAndAnalyze([FromQuery] int userId, [FromQuery] string title, [FromQuery] string artist, [FromQuery] string filePath)
+        public async Task<IActionResult> UploadAndAnalyze([FromQuery] int userId, [FromQuery] string title, [FromQuery] string artist, [FromQuery] string filePath, CancellationToken cancellationToken)
         {
-            var track = await _context.Tracks.FirstOrDefaultAsync(t => t.Title == title && t.Artist == artist);
+            var track = await _context.Tracks.FirstOrDefaultAsync(t => t.Title == title && t.Artist == artist, cancellationToken);
 
             if (track == null)
             {
@@ -30,87 +30,57 @@ namespace NMC.ApiService.Controllers
                     Artist = artist
                 };
 
-                _context.Tracks.Add(track);
-                await _context.SaveChangesAsync();
+                var genres = await _context.Genres.ToListAsync(cancellationToken);
+                var attributes = await _context.AcousticAttributes.ToListAsync(cancellationToken);
 
-                await GenerateDummyScoresForTrackAsync(track.Id);
+                foreach (var genre in genres)
+                {
+                    track.GenreScores.Add(new GenreScore
+                    {
+                        GenreId = genre.Id,
+                        Score = Math.Round(Random.Shared.NextDouble(), 2)
+                    });
+                }
+
+                foreach (var attr in attributes)
+                {
+                    track.AcousticScores.Add(new AcousticScore
+                    {
+                        AttributeId = attr.Id,
+                        Score = Math.Round(Random.Shared.NextDouble(), 2)
+                    });
+                }
             }
 
             var userTrack = new UserTrack
             {
                 UserId = userId,
-                TrackId = track.Id,
+                Track = track,
                 FilePath = filePath
             };
 
             _context.UserTracks.Add(userTrack);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
-            var genreScores = await GetGenreScoresForTrackAsync(track.Id);
-            var acousticScores = await GetAcousticScoresForTrackAsync(track.Id);
-
-            var response = new AnalysisUploadResponseDto(
-                track.Id,
-                userTrack.Id,
-                track.Title,
-                track.Artist,
-                genreScores,
-                acousticScores
-            );
-
+            var response = await FetchAnalysisResponseAsync(userTrack.Id, cancellationToken);
             return Ok(response);
         }
 
         #region Support Methods
-        private async Task GenerateDummyScoresForTrackAsync(int trackId)
+
+        private async Task<AnalysisUploadResponseDto> FetchAnalysisResponseAsync(int userTrackId, CancellationToken cancellationToken)
         {
-            var genres = await _context.Genres.ToListAsync();
-            var attributes = await _context.AcousticAttributes.ToListAsync();
-            var random = new Random();
+            var userTrack = await _context.UserTracks.Where(ut => ut.Id == userTrackId)
+                .Select(ut => new AnalysisUploadResponseDto(
+                    ut.TrackId,
+                    ut.Id,
+                    ut.Track.Title,
+                    ut.Track.Artist,
+                    ut.Track.GenreScores.Select(gs => new GenreScoreDto(gs.GenreId, gs.Genre.Name, gs.Score)).ToList(),
+                    ut.Track.AcousticScores.Select(acs => new AcousticScoreDto(acs.AttributeId, acs.Attribute.Name, acs.Score)).ToList()
+                )).FirstAsync(cancellationToken);
 
-            foreach (var genre in genres)
-            {
-                var genreScore = new GenreScore
-                {
-                    TrackId = trackId,
-                    GenreId = genre.Id,
-                    Score = Math.Round(random.NextDouble(), 2)
-                };
-                _context.GenreScores.Add(genreScore);
-            }
-
-            foreach (var attribute in attributes)
-            {
-                var acousticScore = new AcousticScore
-                {
-                    TrackId = trackId,
-                    AttributeId = attribute.Id,
-                    Score = Math.Round(random.NextDouble(), 2)
-                };
-                _context.AcousticScores.Add(acousticScore);
-            }
-
-            await _context.SaveChangesAsync();
-        }
-
-        private async Task<List<GenreScoreDto>> GetGenreScoresForTrackAsync(int trackId)
-        {
-            return await _context.GenreScores.Where(gs => gs.TrackId == trackId)
-                .Select(gs => new GenreScoreDto(
-                    gs.GenreId,
-                    gs.Genre.Name,
-                    gs.Score
-                )).ToListAsync();
-        }
-
-        private async Task<List<AcousticScoreDto>> GetAcousticScoresForTrackAsync(int trackId)
-        {
-            return await _context.AcousticScores.Where(acs => acs.TrackId == trackId)
-                .Select(acs => new AcousticScoreDto(
-                    acs.AttributeId,
-                    acs.Attribute.Name,
-                    acs.Score
-                )).ToListAsync();
+            return userTrack;
         }
         #endregion
     }
