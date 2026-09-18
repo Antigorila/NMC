@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using NMC.Mobile.Services;
+using NMC.Mobile.ViewModel;
+using NMC.Mobile.Views;
 
 namespace NMC.Mobile;
 
@@ -15,8 +18,18 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
+        string baseAddress = DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5000" : "http://localhost:5000";
+
+        builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
+
+        builder.Services.AddSingleton<SessionService>();
+        builder.Services.AddSingleton<AuthenticationService>();
+
+        builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddTransient<LoginPage>();
+
 #if DEBUG
-		builder.Logging.AddDebug();
+        builder.Logging.AddDebug();
 #endif
 
 		return builder.Build();

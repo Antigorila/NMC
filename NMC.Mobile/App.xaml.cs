@@ -1,16 +1,25 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NMC.Mobile.Services;
 
-namespace NMC.Mobile;
-
-public partial class App : Application
+namespace NMC.Mobile
 {
-	public App()
-	{
-		InitializeComponent();
-	}
+    public partial class App : Application
+    {
+        public App(SessionService sessionService)
+        {
+            InitializeComponent();
 
-	protected override Window CreateWindow(IActivationState? activationState)
-	{
-		return new Window(new AppShell());
-	}
+            MainPage = new AppShell();
+
+            CheckSessionAsync(sessionService);
+        }
+
+        private async void CheckSessionAsync(SessionService sessionService)
+        {
+            if (await sessionService.IsLoggedInAsync())
+            {
+                await Shell.Current.GoToAsync("//MainPage");
+            }
+        }
+    }
 }
