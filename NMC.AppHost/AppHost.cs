@@ -13,4 +13,6 @@ builder.AddProject<Projects.NMC_ApiService>("nmc-api-service")
        .WithReference(database)
        .WaitFor(database);
 
+builder.AddProject<Projects.NMC_Mobile>("nmc-mobile");
+
 builder.Build().Run();
