@@ -11,7 +11,8 @@ var database = sqlServer.AddDatabase("NmcDb");
 
 builder.AddProject<Projects.NMC_ApiService>("nmc-api-service")
        .WithReference(database)
-       .WaitFor(database);
+       .WaitFor(database)
+       .WithHttpEndpoint(port: 5000, name: "http");
 
 builder.AddProject<Projects.NMC_Mobile>("nmc-mobile");
 

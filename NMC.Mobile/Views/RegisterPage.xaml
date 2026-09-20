@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Mobile.ViewModel"
+             x:Class="NMC.Mobile.Views.RegisterPage"
+             x:DataType="vm:RegisterViewModel"
+             Title="Register"
+             BackgroundColor="#121212"
+             Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" Padding="24" RowSpacing="16" VerticalOptions="Center">
+            <Label Text="Register" FontSize="28" FontAttributes="Bold" TextColor="#FFFFFF" HorizontalOptions="Center" Grid.Row="0" />
+
+            <Border Grid.Row="1" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="4">
+                <Entry Placeholder="Username" PlaceholderColor="#888888" TextColor="#FFFFFF" Text="{Binding Username}" />
+            </Border>
+
+            <Border Grid.Row="2" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="4">
+                <Entry Placeholder="Password" PlaceholderColor="#888888" TextColor="#FFFFFF" IsPassword="True" Text="{Binding Password}" />
+            </Border>
+
+            <Border Grid.Row="3" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="4">
+                <Entry Placeholder="Confirm Password" PlaceholderColor="#888888" TextColor="#FFFFFF" IsPassword="True" Text="{Binding ConfirmPassword}" />
+            </Border>
+
+            <Label Text="{Binding ErrorMessage}" TextColor="#FF5555" FontSize="14" HorizontalOptions="Center" Grid.Row="4" />
+
+            <VerticalStackLayout Grid.Row="5" Spacing="12">
+                <Button Text="Register" Command="{Binding RegisterCommand}" BackgroundColor="#2A2A2A" TextColor="#FFFFFF" CornerRadius="4" />
+                <Button Text="Cancel" Command="{Binding GoToLoginCommand}" BackgroundColor="Transparent" TextColor="#888888" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#FFFFFF" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>
