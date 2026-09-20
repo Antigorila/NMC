@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Mobile.ViewModel"
+             xmlns:helpers="clr-namespace:NMC.Mobile.Helper"
+             xmlns:models="clr-namespace:NMC.Mobile.Models"
+             x:Class="NMC.Mobile.Views.MainPage"
+             x:DataType="vm:MainViewModel"
+             Title="MainPage"
+             BackgroundColor="#121212"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto, Auto, *, Auto" Padding="16" RowSpacing="16">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+            <Label Grid.Column="0" Text="Stats" FontSize="16" FontAttributes="Bold" TextColor="#CCCCCC" VerticalOptions="Center" />
+            <Border Grid.Column="2" StrokeThickness="0" BackgroundColor="#2A2A2A" WidthRequest="40" HeightRequest="40" StrokeShape="RoundRectangle 20">
+                <Label Text="U" HorizontalOptions="Center" VerticalOptions="Center" TextColor="#FFFFFF" />
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 20" Padding="0">
+            <Button Text="Add playlist" TextColor="#FFFFFF" BackgroundColor="Transparent" HeightRequest="44" FontAttributes="Bold" />
+        </Border>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Playlists}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="16" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:PlaylistModel">
+                    <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16" HeightRequest="100" Padding="16">
+                        <Grid ColumnDefinitions="*, 100">
+                            <Image Grid.ColumnSpan="2" Source="{Binding CoverImageUrl}" Aspect="AspectFill" Opacity="0.25" />
+                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
+                                <Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold" TextColor="#FFFFFF" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding GenresText}" FontSize="13" TextColor="#AAAAAA" LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+                            <GraphicsView Grid.Column="1" Drawable="{Binding Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}, Path=GraphDrawable, x:DataType=vm:MainViewModel}" HeightRequest="60" WidthRequest="80" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Border Grid.Row="3" Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" WidthRequest="56" HeightRequest="56" StrokeShape="RoundRectangle 28" HorizontalOptions="Center">
+            <Label Text="➕" FontSize="22" TextColor="#FFFFFF" HorizontalOptions="Center" VerticalOptions="Center" />
+        </Border>
+
+    </Grid>
+</ContentPage>

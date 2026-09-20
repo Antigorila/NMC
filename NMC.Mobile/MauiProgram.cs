@@ -22,6 +22,8 @@ public static class MauiProgram
 
         builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
 
+        builder.Services.AddSingleton<AppShell>();
+
         builder.Services.AddSingleton<SessionService>();
         builder.Services.AddSingleton<AuthenticationService>();
 
@@ -30,6 +32,9 @@ public static class MauiProgram
 
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<RegisterPage>();
+
+        builder.Services.AddTransient<MainViewModel>();
+        builder.Services.AddTransient<MainPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

@@ -5,21 +5,10 @@ namespace NMC.Mobile
 {
     public partial class App : Application
     {
-        public App(SessionService sessionService)
+        public App(AppShell appShell)
         {
             InitializeComponent();
-
-            MainPage = new AppShell();
-
-            CheckSessionAsync(sessionService);
-        }
-
-        private async void CheckSessionAsync(SessionService sessionService)
-        {
-            if (await sessionService.IsLoggedInAsync())
-            {
-                await Shell.Current.GoToAsync("//MainPage");
-            }
+            MainPage = appShell;
         }
     }
 }
