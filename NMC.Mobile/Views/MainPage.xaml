@@ -12,9 +12,9 @@
 
     <Grid RowDefinitions="Auto, Auto, *, Auto" Padding="16" RowSpacing="16">
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
-            <Label Grid.Column="0" Text="Stats" FontSize="16" FontAttributes="Bold" TextColor="#CCCCCC" VerticalOptions="Center" />
+            <Button Grid.Column="0" VerticalOptions="Center" ImageSource="stat.png" WidthRequest="20" HeightRequest="20"/>
             <Border Grid.Column="2" StrokeThickness="0" BackgroundColor="#2A2A2A" WidthRequest="40" HeightRequest="40" StrokeShape="RoundRectangle 20">
-                <Label Text="U" HorizontalOptions="Center" VerticalOptions="Center" TextColor="#FFFFFF" />
+                <Image Source="profile.png" WidthRequest="20" HeightRequest="20" HorizontalOptions="Center" VerticalOptions="Center" />
             </Border>
         </Grid>
 
@@ -43,7 +43,7 @@
         </CollectionView>
 
         <Border Grid.Row="3" Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" WidthRequest="56" HeightRequest="56" StrokeShape="RoundRectangle 28" HorizontalOptions="Center">
-            <Label Text="➕" FontSize="22" TextColor="#FFFFFF" HorizontalOptions="Center" VerticalOptions="Center" />
+            <Image Source="addon.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" VerticalOptions="Center" />
         </Border>
 
     </Grid>
