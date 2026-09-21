@@ -24,7 +24,7 @@
 
             <VerticalStackLayout Grid.Row="4" Spacing="12">
                 <Button Text="Login" Command="{Binding LoginCommand}" BackgroundColor="#2A2A2A" TextColor="#FFFFFF" CornerRadius="4" />
-
+                <Button Text="Register" Command="{Binding GoToRegisterCommand}" BackgroundColor="Transparent" TextColor="#888888" />
                 <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#FFFFFF" HorizontalOptions="Center" />
             </VerticalStackLayout>
         </Grid>

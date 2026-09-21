@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace NMC.Mobile.Models
 {
     public class AuthResponse
     {
-        public string Token { get; set; } = string.Empty;
-        public string UserId { get; set; } = string.Empty;
+        [JsonPropertyName("userId")]
+        public int UserId { get; set; }
+
+        [JsonPropertyName("username")]
         public string Username { get; set; } = string.Empty;
+
+        [JsonPropertyName("token")]
+        public string Token { get; set; } = string.Empty;
     }
 }

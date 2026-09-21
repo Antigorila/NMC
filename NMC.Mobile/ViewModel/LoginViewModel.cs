@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NMC.Mobile.Models;
 using NMC.Mobile.Services;
+using NMC.Mobile.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -48,8 +50,9 @@ namespace NMC.Mobile.ViewModel
 
             if (result != null)
             {
-                await _sessionService.SaveSessionAsync(result.Token, result.UserId);
-                await Shell.Current.GoToAsync("//MainPage");
+                await _sessionService.SaveSessionAsync(result.Token, result.UserId.ToString());
+
+                await Shell.Current.GoToAsync(nameof(MainPage));
             }
             else
             {
@@ -57,6 +60,12 @@ namespace NMC.Mobile.ViewModel
             }
 
             IsBusy = false;
+        }
+
+        [RelayCommand]
+        private async Task GoToRegisterAsync()
+        {
+            await Shell.Current.GoToAsync(nameof(Views.RegisterPage));
         }
     }
 }

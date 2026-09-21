@@ -1,9 +1,28 @@
-﻿namespace NMC.Mobile;
+﻿using NMC.Mobile.Services;
+using NMC.Mobile.Views;
+
+namespace NMC.Mobile;
 
 public partial class AppShell : Shell
 {
-	public AppShell()
-	{
-		InitializeComponent();
-	}
+    private readonly SessionService _sessionService;
+
+    public AppShell(SessionService sessionService)
+    {
+        InitializeComponent();
+        _sessionService = sessionService;
+
+        Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
+        Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (await _sessionService.IsLoggedInAsync())
+        {
+            await GoToAsync(nameof(MainPage));
+        }
+    }
 }
