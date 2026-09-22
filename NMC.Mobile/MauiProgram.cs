@@ -36,6 +36,11 @@ public static class MauiProgram
         builder.Services.AddTransient<MainViewModel>();
         builder.Services.AddTransient<MainPage>();
 
+        builder.Services.AddTransient<AddPlaylistPage>();
+        builder.Services.AddTransient<StatsPage>();
+        builder.Services.AddTransient<ProfilePage>();
+        builder.Services.AddTransient<AddMusicPage>();
+
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

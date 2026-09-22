@@ -17,7 +17,7 @@
         </Grid>
 
         <Border Grid.Row="1" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 20" Padding="0">
-            <Button Text="Add playlist" TextColor="#FFFFFF" BackgroundColor="Transparent" HeightRequest="44" FontAttributes="Bold" />
+            <Button x:Name="AddPlaylistButton" Text="Add playlist" TextColor="#FFFFFF" BackgroundColor="Transparent" HeightRequest="44" FontAttributes="Bold" Clicked="AddPlaylistButton_Clicked"/>
         </Border>
 
         <CollectionView Grid.Row="2" ItemsSource="{Binding Playlists}">
@@ -39,6 +39,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        <Button x:Name="AddPlaylistButton" Grid.Row="3" ImageSource="addon.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="#333333" Clicked="AddPlaylistButton_Clicked"/>
+        <Button x:Name="AddMusic" Grid.Row="3" ImageSource="addon.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="#333333" Clicked="AddMusic_Clicked"/>
     </Grid>
 </ContentPage>

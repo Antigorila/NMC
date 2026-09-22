@@ -24,18 +24,23 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private void AddPlaylistButton_Clicked(object sender, EventArgs e)
+    private async void AddPlaylistButton_Clicked(object sender, EventArgs e)
     {
-
+        await Shell.Current.GoToAsync(nameof(AddPlaylistPage));
     }
 
-    private void StatsButton_Clicked(object sender, EventArgs e)
+    private async void StatsButton_Clicked(object sender, EventArgs e)
     {
-
+        await Shell.Current.GoToAsync(nameof(StatsPage));
     }
 
-    private void ProfileButton_Clicked(object sender, EventArgs e)
+    private async void ProfileButton_Clicked(object sender, EventArgs e)
     {
+        await Shell.Current.GoToAsync(nameof(ProfilePage));
+    }
 
+    private async void AddMusic_Clicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(AddMusicPage));
     }
 }
