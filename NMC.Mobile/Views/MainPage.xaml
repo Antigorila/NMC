@@ -12,10 +12,8 @@
 
     <Grid RowDefinitions="Auto, Auto, *, Auto" Padding="16" RowSpacing="16">
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
-            <Button Grid.Column="0" VerticalOptions="Center" ImageSource="stat.png" WidthRequest="20" HeightRequest="20"/>
-            <Border Grid.Column="2" StrokeThickness="0" BackgroundColor="#2A2A2A" WidthRequest="40" HeightRequest="40" StrokeShape="RoundRectangle 20">
-                <Image Source="profile.png" WidthRequest="20" HeightRequest="20" HorizontalOptions="Center" VerticalOptions="Center" />
-            </Border>
+            <Button x:Name="StatsButton" Grid.Column="0" VerticalOptions="Center" ImageSource="stat.png" WidthRequest="20" HeightRequest="20" BackgroundColor="#333333" Clicked="StatsButton_Clicked"/>
+            <Button x:Name="ProfileButton" Grid.Column="2" VerticalOptions="Center" ImageSource="profile.png" WidthRequest="20" HeightRequest="20" BackgroundColor="#333333" Clicked="ProfileButton_Clicked"/>
         </Grid>
 
         <Border Grid.Row="1" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 20" Padding="0">
@@ -41,10 +39,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <Border Grid.Row="3" Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" WidthRequest="56" HeightRequest="56" StrokeShape="RoundRectangle 28" HorizontalOptions="Center">
-            <Image Source="addon.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" VerticalOptions="Center" />
-        </Border>
-
+        <Button x:Name="AddPlaylistButton" Grid.Row="3" ImageSource="addon.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="#333333" Clicked="AddPlaylistButton_Clicked"/>
     </Grid>
 </ContentPage>

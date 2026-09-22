@@ -23,4 +23,19 @@ public partial class MainPage : ContentPage
             BindingContext = Handler.MauiContext.Services.GetService<MainViewModel>();
         }
     }
+
+    private void AddPlaylistButton_Clicked(object sender, EventArgs e)
+    {
+
+    }
+
+    private void StatsButton_Clicked(object sender, EventArgs e)
+    {
+
+    }
+
+    private void ProfileButton_Clicked(object sender, EventArgs e)
+    {
+
+    }
 }
