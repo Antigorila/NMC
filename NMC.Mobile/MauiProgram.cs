@@ -3,48 +3,49 @@ using NMC.Mobile.Services;
 using NMC.Mobile.ViewModel;
 using NMC.Mobile.Views;
 
-namespace NMC.Mobile;
-
-public static class MauiProgram
+namespace NMC.Mobile
 {
-	public static MauiApp CreateMauiApp()
-	{
-		var builder = MauiApp.CreateBuilder();
-		builder
-			.UseMauiApp<App>()
-			.ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-			});
+    public static class MauiProgram
+    {
+        public static MauiApp CreateMauiApp()
+        {
+            var builder = MauiApp.CreateBuilder();
+            builder
+                .UseMauiApp<App>()
+                .ConfigureFonts(fonts =>
+                {
+                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                });
 
-        string baseAddress = DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5000" : "http://localhost:5000";
+            string baseAddress = DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5000" : "http://localhost:5000";
 
-        builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
+            builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
 
-        builder.Services.AddSingleton<AppShell>();
+            builder.Services.AddSingleton<AppShell>();
 
-        builder.Services.AddSingleton<SessionService>();
-        builder.Services.AddSingleton<AuthenticationService>();
+            builder.Services.AddSingleton<SessionService>();
+            builder.Services.AddSingleton<AuthenticationService>();
 
-        builder.Services.AddTransient<LoginViewModel>();
-        builder.Services.AddTransient<LoginPage>();
+            builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<LoginPage>();
 
-        builder.Services.AddTransient<RegisterViewModel>();
-        builder.Services.AddTransient<RegisterPage>();
+            builder.Services.AddTransient<RegisterViewModel>();
+            builder.Services.AddTransient<RegisterPage>();
 
-        builder.Services.AddTransient<MainViewModel>();
-        builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<MainPage>();
 
-        builder.Services.AddTransient<AddPlaylistPage>();
-        builder.Services.AddTransient<StatsPage>();
-        builder.Services.AddTransient<ProfilePage>();
-        builder.Services.AddTransient<AddMusicPage>();
+            builder.Services.AddTransient<AddPlaylistPage>();
+            builder.Services.AddTransient<StatsPage>();
+            builder.Services.AddTransient<ProfilePage>();
+            builder.Services.AddTransient<AddMusicPage>();
 
-#if DEBUG
-        builder.Logging.AddDebug();
-#endif
+            #if DEBUG
+            builder.Logging.AddDebug();
+            #endif
 
-		return builder.Build();
-	}
+            return builder.Build();
+        }
+    }
 }
