@@ -41,9 +41,12 @@ namespace NMC.Mobile
             builder.Services.AddTransient<ProfilePage>();
             builder.Services.AddTransient<AddMusicPage>();
 
-            #if DEBUG
+            builder.Services.AddTransient<ProfileViewModel>();
+            builder.Services.AddTransient<ProfilePage>();
+
+#if DEBUG
             builder.Logging.AddDebug();
-            #endif
+#endif
 
             return builder.Build();
         }

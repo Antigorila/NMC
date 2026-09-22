@@ -49,5 +49,53 @@ namespace NMC.Mobile.Services
                 return false;
             }
         }
+
+        public async Task<AuthResponse?> UpdateUsernameAsync(int userId, string newUsername)
+        {
+            try
+            {
+                var request = new { NewUsername = newUsername };
+                var response = await _httpClient.PutAsJsonAsync($"api/auth/{userId}/username", request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<AuthResponse>();
+                }
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> ChangePasswordAsync(int userId, string newPassword)
+        {
+            try
+            {
+                var request = new { NewPassword = newPassword };
+                var response = await _httpClient.PutAsJsonAsync($"api/auth/{userId}/password", request);
+
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteAccountAsync(int userId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/auth/{userId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

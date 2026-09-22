@@ -31,5 +31,10 @@ namespace NMC.Mobile.Services
             SecureStorage.Default.Remove(TokenKey);
             SecureStorage.Default.Remove(UserIdKey);
         }
+
+        public async Task<string?> GetUserIdAsync()
+        {
+            return await SecureStorage.Default.GetAsync(UserIdKey);
+        }
     }
 }

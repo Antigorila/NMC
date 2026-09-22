@@ -1,9 +1,21 @@
-namespace NMC.Mobile.Views;
+using NMC.Mobile.ViewModel;
 
-public partial class ProfilePage : ContentPage
+namespace NMC.Mobile.Views
 {
-	public ProfilePage()
-	{
-		InitializeComponent();
-	}
+    public partial class ProfilePage : ContentPage
+    {
+        public ProfilePage()
+        {
+            InitializeComponent();
+        }
+
+        public ProfilePage(ProfileViewModel viewModel) : this()
+        {
+            BindingContext = viewModel;
+        }
+        private async void BackButton_Clicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+    }
 }
