@@ -255,5 +255,134 @@ namespace ApiTests
         }
 
         #endregion
+
+        #region UploadTrack Tests
+
+        [Test]
+        public async Task UploadTrack_MissingTitleOrArtist_ReturnsBadRequest()
+        {
+            // Arrange
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+            var dto = new CreateUserTrackRequestDto(1, "", "Artist", "/song.mp3", null);
+
+            // Act
+            var result = await controller.UploadTrack(dto, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequest = result as BadRequestObjectResult;
+            Assert.That(badRequest!.Value, Is.EqualTo("Title and Artist are strictly required."));
+        }
+
+        [Test]
+        public async Task UploadTrack_GenericInvalidValues_ReturnsBadRequest()
+        {
+            // Arrange
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+            var dto = new CreateUserTrackRequestDto(1, "Unknown", "Artist", "/song.mp3", null);
+
+            // Act
+            var result = await controller.UploadTrack(dto, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequest = result as BadRequestObjectResult;
+            Assert.That(badRequest!.Value, Is.EqualTo("Generic names like 'unknown' or 'none' are not allowed."));
+        }
+
+        [Test]
+        public async Task UploadTrack_NewTrack_CreatesTrackSeedsDummyScoresAndCreatesUserTrack()
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                setupContext.Genres.Add(new Genre { Id = 1, Name = "Progressive Metal" });
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+            var dto = new CreateUserTrackRequestDto(1, "Hypnosis", "Sleep Token", "/music/hypnosis.mp3", "/covers/hypnosis.jpg");
+
+            // Act
+            var result = await controller.UploadTrack(dto, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            var userTrackDto = okResult!.Value as UserTrackDto;
+
+            Assert.That(userTrackDto, Is.Not.Null);
+            Assert.That(userTrackDto!.Title, Is.EqualTo("Hypnosis"));
+            Assert.That(userTrackDto.Artist, Is.EqualTo("Sleep Token"));
+            Assert.That(userTrackDto.FilePath, Is.EqualTo("/music/hypnosis.mp3"));
+
+            // Verification in DB
+            var dbTrack = await testContext.Tracks.Include(t => t.GenreScores).FirstOrDefaultAsync(t => t.Title == "Hypnosis");
+            Assert.That(dbTrack, Is.Not.Null);
+            Assert.That(dbTrack!.GenreScores.Count, Is.EqualTo(1));
+
+            var dbUserTrack = await testContext.UserTracks.FirstOrDefaultAsync(ut => ut.UserId == 1 && ut.TrackId == dbTrack.Id);
+            Assert.That(dbUserTrack, Is.Not.Null);
+        }
+
+        [Test]
+        public async Task UploadTrack_ExistingGlobalTrack_ReusesTrackAndCreatesUserTrack()
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                setupContext.Tracks.Add(new Track { Id = 50, Title = "Look To Windward", Artist = "Sleep Token" });
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+            var dto = new CreateUserTrackRequestDto(2, "look to windward", "SLEEP TOKEN", "/music/look_to_windward.mp3", null);
+
+            // Act
+            var result = await controller.UploadTrack(dto, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+
+            var dbTracksCount = await testContext.Tracks.CountAsync();
+            Assert.That(dbTracksCount, Is.EqualTo(1));
+
+            var dbUserTrack = await testContext.UserTracks.FirstOrDefaultAsync(ut => ut.UserId == 2 && ut.TrackId == 50);
+            Assert.That(dbUserTrack, Is.Not.Null);
+        }
+
+        [Test]
+        public async Task UploadTrack_ExistingUserTrack_UpdatesFilePathAndCoverPath()
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                var track = new Track { Id = 1, Title = "Past Self", Artist = "Sleep Token" };
+                setupContext.Tracks.Add(track);
+                setupContext.UserTracks.Add(new UserTrack { Id = 10, UserId = 1, TrackId = 1, FilePath = "/old/path.mp3", CoverPath = "/old/cover.jpg" });
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+            var dto = new CreateUserTrackRequestDto(1, "Past Self", "Sleep Token", "/new/path.mp3", "/new/cover.jpg");
+
+            // Act
+            var result = await controller.UploadTrack(dto, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+
+            var dbUserTrack = await testContext.UserTracks.FindAsync(10);
+            Assert.That(dbUserTrack, Is.Not.Null);
+            Assert.That(dbUserTrack!.FilePath, Is.EqualTo("/new/path.mp3"));
+            Assert.That(dbUserTrack.CoverPath, Is.EqualTo("/new/cover.jpg"));
+        }
+
+        #endregion
     }
 }
