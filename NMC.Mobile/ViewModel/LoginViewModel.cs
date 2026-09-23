@@ -50,8 +50,7 @@ namespace NMC.Mobile.ViewModel
 
             if (result != null)
             {
-                await _sessionService.SaveSessionAsync(result.Token, result.UserId.ToString());
-
+                await _sessionService.SaveSessionAsync(result.Token, result.UserId.ToString(), result.Username);
                 await Shell.Current.GoToAsync(nameof(MainPage));
             }
             else

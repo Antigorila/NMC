@@ -8,16 +8,31 @@ namespace NMC.Mobile.Services
     {
         private const string TokenKey = "auth_token";
         private const string UserIdKey = "user_id";
-
-        public async Task SaveSessionAsync(string token, string userId)
-        {
-            await SecureStorage.Default.SetAsync(TokenKey, token);
-            await SecureStorage.Default.SetAsync(UserIdKey, userId);
-        }
+        private const string UsernameKey = "username";
 
         public async Task<string?> GetTokenAsync()
         {
             return await SecureStorage.Default.GetAsync(TokenKey);
+        }
+
+        public async Task<string?> GetUserIdAsync()
+        {
+            return await SecureStorage.Default.GetAsync(UserIdKey);
+        }
+
+        public async Task<string?> GetUsernameAsync()
+        {
+            return await SecureStorage.Default.GetAsync(UsernameKey);
+        }
+
+        public async Task SaveSessionAsync(string token, string userId, string username = "")
+        {
+            await SecureStorage.Default.SetAsync(TokenKey, token);
+            await SecureStorage.Default.SetAsync(UserIdKey, userId);
+            if (!string.IsNullOrEmpty(username))
+            {
+                await SecureStorage.Default.SetAsync(UsernameKey, username);
+            }
         }
 
         public async Task<bool> IsLoggedInAsync()
@@ -30,11 +45,6 @@ namespace NMC.Mobile.Services
         {
             SecureStorage.Default.Remove(TokenKey);
             SecureStorage.Default.Remove(UserIdKey);
-        }
-
-        public async Task<string?> GetUserIdAsync()
-        {
-            return await SecureStorage.Default.GetAsync(UserIdKey);
         }
     }
 }

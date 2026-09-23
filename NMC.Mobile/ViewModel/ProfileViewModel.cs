@@ -137,5 +137,19 @@ namespace NMC.Mobile.ViewModel
 
             IsBusy = false;
         }
+
+        public async Task InitializeAsync()
+        {
+            var storedUsername = await _sessionService.GetUsernameAsync();
+            if (!string.IsNullOrEmpty(storedUsername))
+            {
+                Username = storedUsername;
+            }
+            else
+            {
+                var userIdStr = await _sessionService.GetUserIdAsync();
+                Username = !string.IsNullOrEmpty(userIdStr) ? $"User #{userIdStr}" : "User";
+            }
+        }
     }
 }
