@@ -15,16 +15,23 @@ namespace NMC.Mobile.Services
             _httpClient = httpClient;
         }
 
-        public async Task<bool> UploadTrackAsync(CreateUserTrackRequest request)
+        public async Task<(bool IsSuccess, string ErrorMessage)> UploadTrackAsync(CreateUserTrackRequest request)
         {
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("api/tracks/upload", request);
-                return response.IsSuccessStatusCode;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return (true, string.Empty);
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return (false, string.IsNullOrWhiteSpace(errorContent) ? "Failed to upload track to the server." : errorContent);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return (false, $"An error occurred: {ex.Message}");
             }
         }
     }

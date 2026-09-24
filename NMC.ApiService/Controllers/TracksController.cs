@@ -71,30 +71,36 @@ namespace NMC.ApiService.Controllers
             var normalizedTitle = dto.Title.Trim();
             var normalizedArtist = dto.Artist.Trim();
 
-            var invalidValues = new[] { "unknown", "none", "null", "undefined", "unknown_1" };
+            var invalidValues = new[] { "unknown", "none", "null", "undefined" };
             if (invalidValues.Contains(normalizedTitle.ToLowerInvariant()) ||
                 invalidValues.Contains(normalizedArtist.ToLowerInvariant()))
             {
                 return BadRequest("Generic names like 'unknown' or 'none' are not allowed.");
             }
 
-            var track = await _context.Tracks.FirstOrDefaultAsync(t => t.Title.ToLower() == normalizedTitle.ToLower() && t.Artist.ToLower() == normalizedArtist.ToLower(), cancellationToken);
+            var lowerArtist = normalizedArtist.ToLowerInvariant();
+            var existingTrackWithSameArtist = await _context.Tracks.FirstOrDefaultAsync(t => t.Artist.ToLower() == lowerArtist, cancellationToken);
+
+            string finalArtist = existingTrackWithSameArtist?.Artist ?? normalizedArtist;
+
+            var lowerTitle = normalizedTitle.ToLowerInvariant();
+            var track = await _context.Tracks.FirstOrDefaultAsync(t => t.Title.ToLower() == lowerTitle && t.Artist.ToLower() == lowerArtist, cancellationToken);
 
             if (track == null)
             {
                 track = new Track
                 {
                     Title = normalizedTitle,
-                    Artist = normalizedArtist
+                    Artist = finalArtist
                 };
 
                 _context.Tracks.Add(track);
                 await _context.SaveChangesAsync(cancellationToken);
-
                 await SeedDummyAnalysisScoresAsync(track.Id, cancellationToken);
             }
 
-            var userTrack = await _context.UserTracks.FirstOrDefaultAsync(ut => ut.UserId == dto.UserId && ut.TrackId == track.Id, cancellationToken);
+            var userTrack = await _context.UserTracks
+                .FirstOrDefaultAsync(ut => ut.UserId == dto.UserId && ut.TrackId == track.Id, cancellationToken);
 
             if (userTrack != null)
             {

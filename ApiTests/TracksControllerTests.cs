@@ -383,6 +383,100 @@ namespace ApiTests
             Assert.That(dbUserTrack.CoverPath, Is.EqualTo("/new/cover.jpg"));
         }
 
+        [TestCase("MOTIONLESS IN WHITE")]
+        [TestCase("motionless in white")]
+        [TestCase("MoTiOnLeSs In WhItE")]
+        public async Task UploadTrack_ExistingArtistDifferentCasing_ReusesExistingArtistName(string inputArtistVariant)
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                setupContext.Tracks.Add(new Track { Id = 100, Title = "Another Life", Artist = "Motionless In White" });
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            var dto = new CreateUserTrackRequestDto(1, "Masterpiece", inputArtistVariant, "/music/masterpiece.mp3", null);
+
+            // Act
+            var result = await controller.UploadTrack(dto, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            var userTrackDto = okResult!.Value as UserTrackDto;
+
+            Assert.That(userTrackDto, Is.Not.Null);
+            Assert.That(userTrackDto!.Artist, Is.EqualTo("Motionless In White"));
+
+            var dbTrack = await testContext.Tracks.FirstOrDefaultAsync(t => t.Title == "Masterpiece");
+            Assert.That(dbTrack, Is.Not.Null);
+            Assert.That(dbTrack!.Artist, Is.EqualTo("Motionless In White"));
+        }
+
+        [Test]
+        public async Task UploadTrack_NewTrack_TriggersAnalysisAndCreatesUserTrack()
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                setupContext.Genres.Add(new Genre { Id = 1, Name = "Rock" });
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+            var dto = new CreateUserTrackRequestDto(1, "New Song", "New Artist", "/music/newsong.mp3", null);
+
+            // Act
+            var result = await controller.UploadTrack(dto, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+
+            var dbTrack = await testContext.Tracks.Include(t => t.GenreScores).FirstOrDefaultAsync(t => t.Title == "New Song" && t.Artist == "New Artist");
+
+            Assert.That(dbTrack, Is.Not.Null);
+            Assert.That(dbTrack!.GenreScores.Count, Is.EqualTo(1));
+
+            var dbUserTrack = await testContext.UserTracks.FirstOrDefaultAsync(ut => ut.UserId == 1 && ut.TrackId == dbTrack.Id);
+            Assert.That(dbUserTrack, Is.Not.Null);
+        }
+
+        [Test]
+        public async Task UploadTrack_ExistingTrack_SkipsAnalysisAndCreatesUserTrack()
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                var existingTrack = new Track { Id = 200, Title = "Existing Song", Artist = "Existing Artist" };
+                setupContext.Tracks.Add(existingTrack);
+                setupContext.Genres.Add(new Genre { Id = 1, Name = "Metal" });
+                setupContext.GenreScores.Add(new GenreScore { TrackId = 200, GenreId = 1, Score = 0.85f });
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            var dto = new CreateUserTrackRequestDto(2, "existing song", "EXISTING ARTIST", "/music/existing.mp3", null);
+
+            // Act
+            var result = await controller.UploadTrack(dto, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+
+            var totalTracksCount = await testContext.Tracks.CountAsync();
+            Assert.That(totalTracksCount, Is.EqualTo(1));
+
+            var dbUserTrack = await testContext.UserTracks.FirstOrDefaultAsync(ut => ut.UserId == 2 && ut.TrackId == 200);
+
+            Assert.That(dbUserTrack, Is.Not.Null);
+            Assert.That(dbUserTrack!.FilePath, Is.EqualTo("/music/existing.mp3"));
+        }
         #endregion
     }
 }

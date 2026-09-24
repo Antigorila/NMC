@@ -82,14 +82,6 @@ namespace NMC.Mobile.ViewModel
                 return;
             }
 
-            var invalidKeywords = new[] { "unknown", "none", "null", "undefined", "unknown_1" };
-            if (invalidKeywords.Contains(trimmedTitle.ToLowerInvariant()) ||
-                invalidKeywords.Contains(trimmedArtist.ToLowerInvariant()))
-            {
-                ErrorMessage = "Words like 'unknown' or 'none' are not allowed. Please enter a valid Title and Artist!";
-                return;
-            }
-
             IsBusy = true;
 
             try
@@ -103,7 +95,7 @@ namespace NMC.Mobile.ViewModel
 
                 var request = new CreateUserTrackRequest(userId, trimmedTitle, trimmedArtist, FilePath,CoverPath);
 
-                var success = await _trackService.UploadTrackAsync(request);
+                var (success, serverError) = await _trackService.UploadTrackAsync(request);
 
                 if (success)
                 {
@@ -111,7 +103,7 @@ namespace NMC.Mobile.ViewModel
                 }
                 else
                 {
-                    ErrorMessage = "Failed to upload track to the server.";
+                    ErrorMessage = serverError;
                 }
             }
             catch (Exception ex)

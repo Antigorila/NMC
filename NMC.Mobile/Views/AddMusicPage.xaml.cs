@@ -36,22 +36,20 @@ namespace NMC.Mobile.Views
 
         private async void AddTrackButton_Clicked(object sender, EventArgs e)
         {
+            if(Title.Text == null)
+            {
+                await DisplayAlertAsync("Error", "Please enter a title for the track.", "OK");
+                return;
+            }
+            
+            if(Artist.Text == null)
+            {
+                await DisplayAlertAsync("Error", "Please enter an artist for the track.", "OK");
+                return;
+            }
+
             string enteredTitle = Title.Text?.Trim();
             string enteredArtist = Artist.Text?.Trim();
-
-            var invalidValues = new[] { "", "unknown", "title", "artist", "<unknown>" };
-
-            if (string.IsNullOrEmpty(enteredTitle) || invalidValues.Contains(enteredTitle.ToLower()))
-            {
-                await DisplayAlertAsync("Error", "Please enter a valid title...", "OK");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(enteredArtist) || invalidValues.Contains(enteredArtist.ToLower()))
-            {
-                await DisplayAlertAsync("Error", "Please enter a valid artist...", "OK");
-                return;
-            }
 
             _viewModel.Title = enteredTitle;
             _viewModel.Artist = enteredArtist;
