@@ -17,7 +17,7 @@
         </Grid>
 
         <Border Grid.Row="1" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 20" Padding="0">
-            <Button x:Name="AddPlaylistButton" Text="Add playlist" TextColor="#FFFFFF" BackgroundColor="Transparent" HeightRequest="44" FontAttributes="Bold" Clicked="AddPlaylistButton_Clicked"/>
+            <Button x:Name="CreatePlaylistButton" Text="Add playlist" TextColor="#FFFFFF" BackgroundColor="Transparent" HeightRequest="44" FontAttributes="Bold" Clicked="CreatePlaylistButton_Clicked"/>
         </Border>
 
         <CollectionView Grid.Row="2" ItemsSource="{Binding Playlists}">

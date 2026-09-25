@@ -27,27 +27,27 @@ namespace NMC.Mobile
             builder.Services.AddSingleton<SessionService>();
             builder.Services.AddSingleton<AuthenticationService>();
 
-            builder.Services.AddTransient<LoginViewModel>();
-            builder.Services.AddTransient<LoginPage>();
-
-            builder.Services.AddTransient<RegisterViewModel>();
-            builder.Services.AddTransient<RegisterPage>();
-
-            builder.Services.AddTransient<MainViewModel>();
-            builder.Services.AddTransient<MainPage>();
-
-            builder.Services.AddTransient<AddPlaylistPage>();
-            builder.Services.AddTransient<StatsPage>();
-            builder.Services.AddTransient<ProfilePage>();
-            builder.Services.AddTransient<AddMusicPage>();
-
-            builder.Services.AddTransient<ProfileViewModel>();
-            builder.Services.AddTransient<ProfilePage>();
-
+            // --- Service ---
             builder.Services.AddSingleton<MediaService>();
             builder.Services.AddTransient<TrackService>();
+            builder.Services.AddTransient<PlaylistService>();
 
+            // --- ViewModel ---
+            builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<RegisterViewModel>();
+            builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<ProfileViewModel>();
             builder.Services.AddTransient<AddMusicViewModel>();
+            builder.Services.AddTransient<CreatePlaylistViewModel>();
+
+            // --- Page ---
+            builder.Services.AddTransient<LoginPage>();
+            builder.Services.AddTransient<RegisterPage>();
+            builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<ProfilePage>();
+            builder.Services.AddTransient<StatsPage>();
+            builder.Services.AddTransient<AddMusicPage>();
+            builder.Services.AddTransient<CreatePlaylistPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

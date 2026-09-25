@@ -13,6 +13,7 @@
                     <ImageButton x:Name="TrackCover" IsEnabled="False" Source="music_placeholder.png" Aspect="AspectFill" IsVisible="True" Clicked="TrackCover_Clicked"/>
                 </Grid>
             </Border>
+            <Label x:Name="CoverImageLabel" IsVisible="False" Text="Tap to choose cover image" HorizontalOptions="Center" TextColor="Gray" FontSize="12" />
 
             <Button x:Name="SelectTrackButton" Text="Select Track" BackgroundColor="#333333" TextColor="White" Clicked="SelectTrackButton_Clicked" IsVisible="True" WidthRequest="180" HorizontalOptions="Center"/>
 

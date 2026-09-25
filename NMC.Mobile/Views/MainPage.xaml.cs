@@ -24,9 +24,9 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private async void AddPlaylistButton_Clicked(object sender, EventArgs e)
+    private async void CreatePlaylistButton_Clicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(AddPlaylistPage));
+        await Shell.Current.GoToAsync(nameof(CreatePlaylistPage));
     }
 
     private async void StatsButton_Clicked(object sender, EventArgs e)

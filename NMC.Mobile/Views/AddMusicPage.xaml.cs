@@ -23,6 +23,7 @@ namespace NMC.Mobile.Views
                 Title.IsVisible = true;
                 Artist.IsVisible = true;
                 AddTrackButton.IsVisible = true;
+                CoverImageLabel.IsVisible = true;
 
                 if (!string.IsNullOrEmpty(_viewModel.Title)) Title.Text = _viewModel.Title;
                 if (!string.IsNullOrEmpty(_viewModel.Artist)) Artist.Text = _viewModel.Artist;

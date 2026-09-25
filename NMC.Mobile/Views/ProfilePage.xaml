@@ -10,7 +10,7 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
             <Grid ColumnDefinitions="Auto, *" VerticalOptions="Center" Margin="0,0,0,10">
-                <Button Grid.Column="0" ImageSource="back.png" WidthRequest="40" HeightRequest="40" CornerRadius="20" BackgroundColor="#333333" Padding="0" Clicked="BackButton_Clicked" VerticalOptions="Center" />
+                <Button Grid.Column="0" ImageSource="back.png" WidthRequest="40" HeightRequest="40" Margin="5" BackgroundColor="#333333" Padding="0" Clicked="BackButton_Clicked" VerticalOptions="Center" />
                 <Label Grid.Column="1" Text="User Profile" FontSize="20" FontAttributes="Bold" TextColor="#FFFFFF" Margin="16,0,0,0" VerticalOptions="Center" />
             </Grid>
 
