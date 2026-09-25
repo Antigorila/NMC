@@ -34,5 +34,17 @@ namespace NMC.Mobile.Services
                 return (false, $"An error occurred: {ex.Message}");
             }
         }
+
+        public async Task<List<PlaylistModel>> GetPlaylistsAsync(int userId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<PlaylistModel>>($"api/playlists?userId={userId}") ?? new();
+            }
+            catch (Exception)
+            {
+                return new();
+            }
+        }
     }
 }

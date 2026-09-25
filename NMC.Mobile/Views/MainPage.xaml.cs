@@ -1,46 +1,54 @@
 using NMC.Mobile.ViewModel;
 
-namespace NMC.Mobile.Views;
-
-public partial class MainPage : ContentPage
+namespace NMC.Mobile.Views
 {
-    public MainPage()
+    public partial class MainPage : ContentPage
     {
-        InitializeComponent();
-    }
+        private MainViewModel _viewModel;
 
-    public MainPage(MainViewModel viewModel) : this()
-    {
-        BindingContext = viewModel;
-    }
-
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-
-        if (BindingContext == null && Handler?.MauiContext != null)
+        public MainPage()
         {
-            BindingContext = Handler.MauiContext.Services.GetService<MainViewModel>();
+            InitializeComponent();
         }
-    }
 
-    private async void CreatePlaylistButton_Clicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync(nameof(CreatePlaylistPage));
-    }
+        public MainPage(MainViewModel viewModel) : this()
+        {
+            BindingContext = _viewModel = viewModel;
+        }
 
-    private async void StatsButton_Clicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync(nameof(StatsPage));
-    }
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
 
-    private async void ProfileButton_Clicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync(nameof(ProfilePage));
-    }
+            if (_viewModel == null && Handler?.MauiContext != null)
+            {
+                BindingContext = _viewModel = Handler.MauiContext.Services.GetService<MainViewModel>();
+            }
 
-    private async void AddMusic_Clicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync(nameof(AddMusicPage));
+            if (_viewModel != null)
+            {
+                await _viewModel.LoadPlaylistsAsync();
+            }
+        }
+
+        private async void CreatePlaylistButton_Clicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(CreatePlaylistPage));
+        }
+
+        private async void StatsButton_Clicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(StatsPage));
+        }
+
+        private async void ProfileButton_Clicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(ProfilePage));
+        }
+
+        private async void AddMusic_Clicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(AddMusicPage));
+        }
     }
 }
