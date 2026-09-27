@@ -26,7 +26,9 @@ namespace NMC.Mobile
 
             builder.Services.AddSingleton<SessionService>();
             builder.Services.AddSingleton<AuthenticationService>();
-            builder.Services.AddSingleton<MainViewModel>();
+
+            //builder.Services.AddSingleton<MainViewModel>();
+            builder.Services.AddTransient<MainViewModel>();
 
             // --- Service ---
             builder.Services.AddSingleton<MediaService>();

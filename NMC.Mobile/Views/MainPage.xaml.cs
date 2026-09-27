@@ -27,7 +27,7 @@ namespace NMC.Mobile.Views
 
             if (_viewModel != null)
             {
-                await _viewModel.LoadPlaylistsAsync();
+                await _viewModel.LoadPlaylistsOnceAsync();
             }
         }
 

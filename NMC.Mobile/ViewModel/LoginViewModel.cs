@@ -25,6 +25,8 @@ namespace NMC.Mobile.ViewModel
 
         [ObservableProperty]
         private string _errorMessage = string.Empty;
+        [ObservableProperty]
+        private bool _isCheckingSession = true;
 
         public LoginViewModel(AuthenticationService authService, SessionService sessionService)
         {
@@ -65,6 +67,22 @@ namespace NMC.Mobile.ViewModel
         private async Task GoToRegisterAsync()
         {
             await Shell.Current.GoToAsync(nameof(Views.RegisterPage));
+        }
+
+        public async Task CheckExistingSessionAsync()
+        {
+            if (await _sessionService.IsLoggedInAsync())
+            {
+                var currentRoute = Shell.Current.CurrentState.Location.OriginalString;
+                if (!currentRoute.Contains(nameof(MainPage)))
+                {
+                    await Shell.Current.GoToAsync(nameof(MainPage));
+                }
+            }
+            else
+            {
+                IsCheckingSession = false;
+            }
         }
     }
 }

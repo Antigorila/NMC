@@ -26,7 +26,7 @@ namespace NMC.Mobile.Views
         }
         private async void BackButton_Clicked(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("/MainPage");
+            await Shell.Current.GoToAsync("..");
         }
     }
 }

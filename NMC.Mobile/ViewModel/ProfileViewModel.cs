@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NMC.Mobile.Services;
+using NMC.Mobile.Views;
 
 namespace NMC.Mobile.ViewModel
 {
@@ -104,8 +105,23 @@ namespace NMC.Mobile.ViewModel
         [RelayCommand]
         private async Task LogoutAsync()
         {
-            _sessionService.ClearSession();
-            await Shell.Current.GoToAsync("//LoginPage");
+            if (IsBusy) return;
+            IsBusy = true;
+
+            try
+            {
+                _sessionService.ClearSession();
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    App.Current!.MainPage = new AppShell();
+                });
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Logout failed: {ex.Message}";
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
@@ -120,19 +136,31 @@ namespace NMC.Mobile.ViewModel
             IsBusy = true;
             ErrorMessage = string.Empty;
 
-            var userIdStr = await _sessionService.GetUserIdAsync();
-            if (int.TryParse(userIdStr, out int userId))
+            try
             {
-                bool success = await _authService.DeleteAccountAsync(userId);
-                if (success)
+                var userIdStr = await _sessionService.GetUserIdAsync();
+                if (int.TryParse(userIdStr, out int userId))
                 {
-                    _sessionService.ClearSession();
-                    await Shell.Current.GoToAsync("//LoginPage");
+                    bool success = await _authService.DeleteAccountAsync(userId);
+                    if (success)
+                    {
+                        _sessionService.ClearSession();
+
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            App.Current!.MainPage = new AppShell();
+                        });
+                        return;
+                    }
+                    else
+                    {
+                        ErrorMessage = "Failed to delete account on the server.";
+                    }
                 }
-                else
-                {
-                    ErrorMessage = "Failed to delete account.";
-                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"An error occurred: {ex.Message}";
             }
 
             IsBusy = false;

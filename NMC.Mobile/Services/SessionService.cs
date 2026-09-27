@@ -43,8 +43,16 @@ namespace NMC.Mobile.Services
 
         public void ClearSession()
         {
-            SecureStorage.Default.Remove(TokenKey);
-            SecureStorage.Default.Remove(UserIdKey);
+            try
+            {
+                SecureStorage.Default.Remove(TokenKey);
+                SecureStorage.Default.Remove(UserIdKey);
+                SecureStorage.Default.Remove(UsernameKey);
+            }
+            catch
+            {
+
+            }
         }
     }
 }

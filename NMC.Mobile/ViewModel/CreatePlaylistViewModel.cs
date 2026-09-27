@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using NMC.Mobile.Helper;
 using NMC.Mobile.Models;
 using NMC.Mobile.Services;
 using System;
@@ -71,6 +73,16 @@ namespace NMC.Mobile.ViewModel
 
                 if (success)
                 {
+                    var newPlaylist = new PlaylistModel
+                    {
+                        PlaylistName = trimmedName,
+                        CoverPath = CoverPath,
+                        UserId = userId,
+                        TrackCount = 0
+                    };
+
+                    WeakReferenceMessenger.Default.Send(new PlaylistCreatedMessage(newPlaylist));
+
                     await Shell.Current.GoToAsync("..");
                 }
                 else
