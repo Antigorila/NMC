@@ -16,6 +16,7 @@ namespace NMC.Mobile
             Routing.RegisterRoute(nameof(StatsPage), typeof(StatsPage));
             Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
             Routing.RegisterRoute(nameof(AddMusicPage), typeof(AddMusicPage));
+            Routing.RegisterRoute(nameof(PlaylistViewPage), typeof(PlaylistViewPage));
         }
     }
 }

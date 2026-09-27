@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Mobile.ViewModel"
+             xmlns:models="clr-namespace:NMC.Mobile.Models"
+             x:Class="NMC.Mobile.Views.PlaylistViewPage"
+             x:DataType="vm:PlaylistDetailViewModel"
+             Title="{Binding Playlist.PlaylistName}"
+             BackgroundColor="#121212">
+
+    <Grid RowDefinitions="Auto, *, Auto" Padding="20" RowSpacing="20">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="15" HorizontalOptions="Center">
+            <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16" WidthRequest="160" HeightRequest="160" Padding="0" HorizontalOptions="Center">
+                <Image Source="{Binding Playlist.CoverPath, TargetNullValue='music_placeholder.png'}" Aspect="AspectFill" />
+            </Border>
+            <Label Text="{Binding Playlist.PlaylistName}" FontSize="22" FontAttributes="Bold" TextColor="#FFFFFF" HorizontalOptions="Center" LineBreakMode="TailTruncation" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Playlist.Tracks}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="12" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:UserTrackModel">
+                    <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 14" Padding="14">
+                        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
+                                <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold" TextColor="#FFFFFF" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Artist}" FontSize="13" TextColor="#AAAAAA" LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+
+                            <Button Grid.Column="1" Text="✕" BackgroundColor="Transparent" TextColor="#FF5555" FontSize="16"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistDetailViewModel}}, Path=RemoveTrackCommand}"
+                                    CommandParameter="{Binding}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Grid.Row="2" Text="Delete Playlist" BackgroundColor="#331111" TextColor="#FF5555" 
+                Command="{Binding DeletePlaylistCommand}" HorizontalOptions="Center" WidthRequest="200" />
+
+    </Grid>
+</ContentPage>

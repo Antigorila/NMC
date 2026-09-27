@@ -41,6 +41,7 @@ namespace NMC.Mobile
             builder.Services.AddTransient<ProfileViewModel>();
             builder.Services.AddTransient<AddMusicViewModel>();
             builder.Services.AddTransient<CreatePlaylistViewModel>();
+            builder.Services.AddTransient<PlaylistDetailViewModel>();
 
             // --- Page ---
             builder.Services.AddTransient<LoginPage>();
@@ -50,6 +51,7 @@ namespace NMC.Mobile
             builder.Services.AddTransient<StatsPage>();
             builder.Services.AddTransient<AddMusicPage>();
             builder.Services.AddTransient<CreatePlaylistPage>();
+            builder.Services.AddTransient<PlaylistViewPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

@@ -21,6 +21,9 @@ namespace NMC.Mobile.ViewModel
 
         [ObservableProperty]
         private string _errorMessage = string.Empty;
+        [ObservableProperty]
+        private PlaylistModel? _selectedPlaylist;
+
 
         private bool _hasLoadedOnce = false;
 
@@ -87,6 +90,15 @@ namespace NMC.Mobile.ViewModel
         {
             if (playlist == null) return;
             await Shell.Current.GoToAsync($"PlaylistViewPage?playlistId={playlist.Id}");
+        }
+
+        partial void OnSelectedPlaylistChanged(PlaylistModel? value)
+        {
+            if (value != null)
+            {
+                SelectPlaylistCommand.Execute(value);
+                SelectedPlaylist = null;
+            }
         }
     }
 }

@@ -47,5 +47,43 @@ namespace NMC.Mobile.Services
                 return new List<PlaylistModel>();
             }
         }
+
+        public async Task<PlaylistDetailModel?> GetPlaylistDetailAsync(int playlistId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<PlaylistDetailModel>($"api/playlists/{playlistId}");
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> DeletePlaylistAsync(int playlistId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/playlists/{playlistId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveTrackFromPlaylistAsync(int playlistId, int userTrackId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/playlists/{playlistId}/tracks/{userTrackId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }
