@@ -24,10 +24,25 @@ namespace NMC.Mobile.ViewModel
         [ObservableProperty]
         private string _errorMessage = string.Empty;
 
+        [ObservableProperty]
+        private PlaylistModel? _selectedPlaylist;
+
         public MainViewModel(PlaylistService playlistService, SessionService sessionService)
         {
             _playlistService = playlistService;
             _sessionService = sessionService;
+        }
+
+        partial void OnSelectedPlaylistChanged(PlaylistModel? value)
+        {
+            if (value != null)
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await Shell.Current.GoToAsync($"PlaylistViewPage?playlistId={value.Id}");
+                    SelectedPlaylist = null;
+                });
+            }
         }
 
         public async Task LoadPlaylistsAsync()
@@ -39,18 +54,20 @@ namespace NMC.Mobile.ViewModel
             try
             {
                 var userIdStr = await _sessionService.GetUserIdAsync();
-                if (!int.TryParse(userIdStr, out int userId))
+                if (!int.TryParse(userIdStr, out int userId) || userId <= 0)
                 {
-                    ErrorMessage = "Invalid user session!";
                     return;
                 }
 
                 var playlists = await _playlistService.GetPlaylistsAsync(userId);
 
                 Playlists.Clear();
-                foreach (var playlist in playlists)
+                if (playlists != null)
                 {
-                    Playlists.Add(playlist);
+                    foreach (var playlist in playlists)
+                    {
+                        Playlists.Add(playlist);
+                    }
                 }
             }
             catch (Exception ex)
@@ -61,14 +78,6 @@ namespace NMC.Mobile.ViewModel
             {
                 IsBusy = false;
             }
-        }
-
-        [RelayCommand]
-        private async Task SelectPlaylistAsync(PlaylistModel playlist)
-        {
-            if (playlist == null) return;
-
-            await Shell.Current.GoToAsync($"PlaylistViewPage?playlistId={playlist.Id}");
         }
     }
 }

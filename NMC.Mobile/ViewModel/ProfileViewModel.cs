@@ -55,7 +55,7 @@ namespace NMC.Mobile.ViewModel
                 if (result != null)
                 {
                     Username = result.Username;
-                    await _sessionService.SaveSessionAsync(result.Token, result.UserId.ToString());
+                    await _sessionService.SaveSessionAsync(result.Token, result.UserId.ToString(), result.Username);
                     StatusMessage = "Username updated successfully!";
                     NewUsername = string.Empty;
                 }

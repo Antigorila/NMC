@@ -12,9 +12,9 @@ public partial class AppShell : Shell
         InitializeComponent();
         _sessionService = sessionService;
 
-        Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
         Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
 
+        Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
         Routing.RegisterRoute(nameof(CreatePlaylistPage), typeof(CreatePlaylistPage));
         Routing.RegisterRoute(nameof(StatsPage), typeof(StatsPage));
         Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
