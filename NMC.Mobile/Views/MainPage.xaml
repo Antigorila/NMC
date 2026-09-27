@@ -11,8 +11,8 @@
 
     <Grid RowDefinitions="Auto, Auto, *, Auto" Padding="16" RowSpacing="16">
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
-            <Button x:Name="StatsButton" Grid.Column="0" VerticalOptions="Center" ImageSource="stat.png" WidthRequest="20" HeightRequest="20" BackgroundColor="#333333" Clicked="StatsButton_Clicked"/>
-            <Button x:Name="ProfileButton" Grid.Column="2" VerticalOptions="Center" ImageSource="profile.png" WidthRequest="20" HeightRequest="20" BackgroundColor="#333333" Clicked="ProfileButton_Clicked"/>
+            <Button x:Name="StatsButton" Grid.Column="0" VerticalOptions="Center" ImageSource="stat.png" WidthRequest="36" HeightRequest="36" BackgroundColor="#333333" Clicked="StatsButton_Clicked"/>
+            <Button x:Name="ProfileButton" Grid.Column="2" VerticalOptions="Center" ImageSource="profile.png" WidthRequest="36" HeightRequest="36" BackgroundColor="#333333" Clicked="ProfileButton_Clicked"/>
         </Grid>
 
         <Border Grid.Row="1" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 20" Padding="0">

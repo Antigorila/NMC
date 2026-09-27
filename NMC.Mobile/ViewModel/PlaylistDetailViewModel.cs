@@ -22,6 +22,17 @@ namespace NMC.Mobile.ViewModel
         [ObservableProperty]
         private string _errorMessage = string.Empty;
 
+        [ObservableProperty]
+        private bool _isEditingName;
+
+        [ObservableProperty]
+        private string _editedPlaylistName = string.Empty;
+
+        [ObservableProperty]
+        private bool _isShuffleEnabled;
+
+        public string ShuffleIconSource => IsShuffleEnabled ? "shuffle_on.png" : "shuffle_off.png";
+
         public PlaylistDetailViewModel(PlaylistService playlistService)
         {
             _playlistService = playlistService;
@@ -57,15 +68,54 @@ namespace NMC.Mobile.ViewModel
         }
 
         [RelayCommand]
-        private async Task RemoveTrackAsync(UserTrackModel track)
+        private void StartEditingName()
         {
-            if (Playlist == null || track == null) return;
+            if (Playlist == null) return;
+            EditedPlaylistName = Playlist.PlaylistName;
+            IsEditingName = true;
+        }
 
-            bool success = await _playlistService.RemoveTrackFromPlaylistAsync(Playlist.Id, track.Id);
-            if (success)
-            {
-                Playlist.Tracks.Remove(track);
-            }
+        [RelayCommand]
+        private async Task SavePlaylistNameAsync()
+        {
+            if (Playlist == null || string.IsNullOrWhiteSpace(EditedPlaylistName)) return;
+
+            Playlist.PlaylistName = EditedPlaylistName.Trim();
+            IsEditingName = false;
+
+            // Itt majd jöhet az API hívás a mentéshez, ha szükséges:
+            // await _playlistService.UpdatePlaylistNameAsync(Playlist.Id, Playlist.PlaylistName);
+        }
+
+        [RelayCommand]
+        private void CancelEditingName()
+        {
+            IsEditingName = false;
+        }
+
+        [RelayCommand]
+        private void ToggleShuffle()
+        {
+            IsShuffleEnabled = !IsShuffleEnabled;
+            OnPropertyChanged(nameof(ShuffleIconSource));
+        }
+
+        [RelayCommand]
+        private async Task ChangeCoverAsync()
+        {
+            // TODO: Ide jön a képválasztó logika
+        }
+
+        [RelayCommand]
+        private void PlayPlaylist()
+        {
+            // TODO: Lejátszás indítása
+        }
+
+        [RelayCommand]
+        private async Task AddTrackToPlaylistAsync()
+        {
+            // TODO: Zene hozzáadása
         }
 
         [RelayCommand]
@@ -84,6 +134,18 @@ namespace NMC.Mobile.ViewModel
             else
             {
                 ErrorMessage = "Failed to delete playlist.";
+            }
+        }
+
+        [RelayCommand]
+        private async Task RemoveTrackAsync(UserTrackModel track)
+        {
+            if (Playlist == null || track == null) return;
+
+            bool success = await _playlistService.RemoveTrackFromPlaylistAsync(Playlist.Id, track.Id);
+            if (success)
+            {
+                Playlist.Tracks.Remove(track);
             }
         }
     }

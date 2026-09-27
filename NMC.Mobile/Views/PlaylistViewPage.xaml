@@ -6,41 +6,67 @@
              x:Class="NMC.Mobile.Views.PlaylistViewPage"
              x:DataType="vm:PlaylistDetailViewModel"
              Title="{Binding Playlist.PlaylistName}"
-             BackgroundColor="#121212">
-
-    <Grid RowDefinitions="Auto, *, Auto" Padding="20" RowSpacing="20">
-
-        <VerticalStackLayout Grid.Row="0" Spacing="15" HorizontalOptions="Center">
-            <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16" WidthRequest="160" HeightRequest="160" Padding="0" HorizontalOptions="Center">
-                <Image Source="{Binding Playlist.CoverPath, TargetNullValue='music_placeholder.png'}" Aspect="AspectFill" />
+             BackgroundColor="#0A0A0A"
+             Shell.NavBarIsVisible="False">
+    <Grid RowDefinitions="Auto, *" RowSpacing="0">
+        <Grid BackgroundColor="#121212" Grid.Row="0" Padding="20,20,20,16" RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="16">
+            <Grid ColumnDefinitions="*, Auto" Grid.Row="0">
+                <Border BackgroundColor="#1E1E1E" Grid.Column="1" HorizontalOptions="End" Padding="8" Stroke="#2A2A2A" StrokeShape="RoundRectangle 8" StrokeThickness="1" HeightRequest="36" WidthRequest="36">
+                    <ImageButton Aspect="AspectFit" BackgroundColor="Transparent" Command="{Binding DeletePlaylistCommand}" HorizontalOptions="Fill" Source="delete_button.png" VerticalOptions="Fill"/>
+                </Border>
+            </Grid>
+            <Border BackgroundColor="#1A1A1A" Grid.Row="1" HeightRequest="180" HorizontalOptions="Center" Padding="0" Stroke="#2A2A2A" StrokeShape="RoundRectangle 16" StrokeThickness="1" WidthRequest="180">
+                <ImageButton Aspect="AspectFill" BackgroundColor="Transparent" Command="{Binding ChangeCoverCommand}" HorizontalOptions="Fill" Source="{Binding Playlist.CoverPath, TargetNullValue='music_placeholder.png'}" VerticalOptions="Fill"/>
             </Border>
-            <Label Text="{Binding Playlist.PlaylistName}" FontSize="22" FontAttributes="Bold" TextColor="#FFFFFF" HorizontalOptions="Center" LineBreakMode="TailTruncation" />
-        </VerticalStackLayout>
-
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Playlist.Tracks}">
+            <Grid Grid.Row="2" HorizontalOptions="Center" WidthRequest="300">
+                <Label FontAttributes="Bold" FontSize="20" HorizontalTextAlignment="Center" IsVisible="{Binding !IsEditingName}" Text="{Binding Playlist.PlaylistName}" TextColor="#FFFFFF" VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding StartEditingNameCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+                <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8" IsVisible="{Binding IsEditingName}" VerticalOptions="Center">
+                    <Entry BackgroundColor="#1A1A1A" FontSize="16" Grid.Column="0" Text="{Binding EditedPlaylistName}" TextColor="#FFFFFF" VerticalOptions="Center"/>
+                    <Border BackgroundColor="#2A2A2A" Grid.Column="1" Padding="8" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="36" VerticalOptions="Center" WidthRequest="36">
+                        <ImageButton Aspect="AspectFit" BackgroundColor="Transparent" Command="{Binding SavePlaylistNameCommand}" HorizontalOptions="Fill" Source="save_button.png" VerticalOptions="Fill"/>
+                    </Border>
+                    <Border BackgroundColor="#2A2A2A" Grid.Column="2" Padding="8" Stroke="Transparent" StrokeShape="RoundRectangle 8" HeightRequest="36" VerticalOptions="Center" WidthRequest="36">
+                        <ImageButton Aspect="AspectFit" BackgroundColor="Transparent" Command="{Binding CancelEditingNameCommand}" HorizontalOptions="Fill" Source="cancel_button.png" VerticalOptions="Fill"/>
+                    </Border>
+                </Grid>
+            </Grid>
+            <HorizontalStackLayout Grid.Row="3" HorizontalOptions="Center" Spacing="14" VerticalOptions="Center">
+                <Border BackgroundColor="#FFFFFF" WidthRequest="44" HeightRequest="44" Padding="12" Stroke="Transparent" StrokeShape="RoundRectangle 12">
+                    <ImageButton Aspect="AspectFit" BackgroundColor="Transparent" Command="{Binding PlayPlaylistCommand}" HorizontalOptions="Fill" Source="play_button.png" VerticalOptions="Fill"/>
+                </Border>
+                <Border BackgroundColor="#1E1E1E" WidthRequest="44" HeightRequest="44" Padding="12" Stroke="#2A2A2A" StrokeShape="RoundRectangle 12" StrokeThickness="1">
+                    <ImageButton Aspect="AspectFit" BackgroundColor="Transparent" Command="{Binding AddTrackToPlaylistCommand}" HorizontalOptions="Fill" Source="addon.png" VerticalOptions="Fill"/>
+                </Border>
+                <Border BackgroundColor="#1E1E1E" WidthRequest="44" HeightRequest="44" Padding="12" Stroke="#2A2A2A" StrokeShape="RoundRectangle 12" StrokeThickness="1">
+                    <ImageButton Aspect="AspectFit" BackgroundColor="Transparent" Command="{Binding ToggleShuffleCommand}" HorizontalOptions="Fill" Source="{Binding ShuffleIconSource}" VerticalOptions="Fill"/>
+                </Border>
+            </HorizontalStackLayout>
+        </Grid>
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Playlist.Tracks}" Margin="16,0,16,16">
             <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Vertical" ItemSpacing="12" />
+                <LinearItemsLayout ItemSpacing="8" Orientation="Vertical"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:UserTrackModel">
-                    <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 14" Padding="14">
-                        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
-                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
-                                <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold" TextColor="#FFFFFF" LineBreakMode="TailTruncation" />
-                                <Label Text="{Binding Artist}" FontSize="13" TextColor="#AAAAAA" LineBreakMode="TailTruncation" />
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems Mode="Execute">
+                                <SwipeItem BackgroundColor="#441111" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistDetailViewModel}}, Path=RemoveTrackCommand}" CommandParameter="{Binding}" Text="Delete"/>
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <Border BackgroundColor="#181818" Padding="14,10" Stroke="#222222" StrokeShape="RoundRectangle 10" StrokeThickness="1">
+                            <VerticalStackLayout Spacing="2">
+                                <Label FontAttributes="Bold" FontSize="15" LineBreakMode="TailTruncation" Text="{Binding Title}" TextColor="#FFFFFF"/>
+                                <Label FontSize="12" LineBreakMode="TailTruncation" Text="{Binding Artist}" TextColor="#888888"/>
                             </VerticalStackLayout>
-
-                            <Button Grid.Column="1" Text="✕" BackgroundColor="Transparent" TextColor="#FF5555" FontSize="16"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistDetailViewModel}}, Path=RemoveTrackCommand}"
-                                    CommandParameter="{Binding}" />
-                        </Grid>
-                    </Border>
+                        </Border>
+                    </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <Button Grid.Row="2" Text="Delete Playlist" BackgroundColor="#331111" TextColor="#FF5555" 
-                Command="{Binding DeletePlaylistCommand}" HorizontalOptions="Center" WidthRequest="200" />
-
     </Grid>
 </ContentPage>
