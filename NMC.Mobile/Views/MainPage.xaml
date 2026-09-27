@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:NMC.Mobile.ViewModel"
@@ -20,30 +19,35 @@
             <Button x:Name="CreatePlaylistButton" Text="Add playlist" TextColor="#FFFFFF" BackgroundColor="Transparent" HeightRequest="44" FontAttributes="Bold" Clicked="CreatePlaylistButton_Clicked"/>
         </Border>
 
-        <CollectionView Grid.Row="2" ItemsSource="{Binding Playlists}">
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Vertical" ItemSpacing="16" />
-            </CollectionView.ItemsLayout>
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:PlaylistModel">
-                    <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16" HeightRequest="100" Padding="0">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}, Path=SelectPlaylistCommand}" CommandParameter="{Binding}" />
-                        </Border.GestureRecognizers>
-                        <Grid>
-                            <Image Source="{Binding CoverPath, TargetNullValue='music_placeholder.png'}" Aspect="AspectFill" Opacity="0.25" />
-                            <Grid ColumnDefinitions="*, 100" Padding="16">
-                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
-                                    <Label Text="{Binding PlaylistName}" FontSize="18" FontAttributes="Bold" TextColor="#FFFFFF" LineBreakMode="TailTruncation" />
-                                    <Label Text="{Binding TrackCount, StringFormat='{0} tracks'}" FontSize="13" TextColor="#AAAAAA" LineBreakMode="TailTruncation" />
-                                </VerticalStackLayout>
-                                <GraphicsView Grid.Column="1" Drawable="{Binding Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}, Path=GraphDrawable, x:DataType=vm:MainViewModel}" HeightRequest="60" WidthRequest="80" HorizontalOptions="End" VerticalOptions="Center" />
+        <Grid Grid.Row="2">
+            <CollectionView ItemsSource="{Binding Playlists}" SelectionMode="Single" SelectedItem="{Binding SelectedPlaylist, Mode=TwoWay}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="16" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:PlaylistModel">
+                        <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16" HeightRequest="100" Padding="0">
+                            <Grid>
+                                <Image Source="{Binding CoverPath, TargetNullValue='music_placeholder.png'}" Aspect="AspectFill" Opacity="0.25" />
+                                <Grid ColumnDefinitions="*, 100" Padding="16">
+                                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
+                                        <Label Text="{Binding PlaylistName}" FontSize="18" FontAttributes="Bold" TextColor="#FFFFFF" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding TrackCount, StringFormat='{0} tracks'}" FontSize="13" TextColor="#AAAAAA" LineBreakMode="TailTruncation" />
+                                    </VerticalStackLayout>
+                                    <GraphicsView Grid.Column="1" Drawable="{Binding Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}, Path=GraphDrawable, x:DataType=vm:MainViewModel}" HeightRequest="60" WidthRequest="80" HorizontalOptions="End" VerticalOptions="Center" />
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="12" IsVisible="{Binding IsBusy}">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="Gray" WidthRequest="40" HeightRequest="40" />
+                <Label Text="Loading your music..." TextColor="#AAAAAA" FontSize="14" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+
         <Button x:Name="AddMusic" Grid.Row="3" ImageSource="addon.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="#333333" Clicked="AddMusic_Clicked"/>
     </Grid>
 </ContentPage>

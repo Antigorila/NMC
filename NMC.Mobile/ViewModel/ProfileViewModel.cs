@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NMC.Mobile.Services;
+using NMC.Mobile.Views;
 
 namespace NMC.Mobile.ViewModel
 {
@@ -48,14 +49,16 @@ namespace NMC.Mobile.ViewModel
             ErrorMessage = string.Empty;
             StatusMessage = string.Empty;
 
-            var userIdStr = await _sessionService.GetUserIdAsync();
-            if (int.TryParse(userIdStr, out int userId))
+            try
             {
-                var result = await _authService.UpdateUsernameAsync(userId, NewUsername);
+                var userId = await GetCurrentUserIdAsync();
+                if (userId == null) return;
+
+                var result = await _authService.UpdateUsernameAsync(userId.Value, NewUsername);
                 if (result != null)
                 {
                     Username = result.Username;
-                    await _sessionService.SaveSessionAsync(result.Token, result.UserId.ToString());
+                    await _sessionService.SaveSessionAsync(result.Token, result.UserId.ToString(), result.Username);
                     StatusMessage = "Username updated successfully!";
                     NewUsername = string.Empty;
                 }
@@ -64,8 +67,10 @@ namespace NMC.Mobile.ViewModel
                     ErrorMessage = "Failed to update username. It might be taken.";
                 }
             }
-
-            IsBusy = false;
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
@@ -83,10 +88,12 @@ namespace NMC.Mobile.ViewModel
             ErrorMessage = string.Empty;
             StatusMessage = string.Empty;
 
-            var userIdStr = await _sessionService.GetUserIdAsync();
-            if (int.TryParse(userIdStr, out int userId))
+            try
             {
-                bool success = await _authService.ChangePasswordAsync(userId, NewPassword);
+                var userId = await GetCurrentUserIdAsync();
+                if (userId == null) return;
+
+                bool success = await _authService.ChangePasswordAsync(userId.Value, NewPassword);
                 if (success)
                 {
                     StatusMessage = "Password changed successfully!";
@@ -97,15 +104,28 @@ namespace NMC.Mobile.ViewModel
                     ErrorMessage = "Failed to change password.";
                 }
             }
-
-            IsBusy = false;
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
         private async Task LogoutAsync()
         {
-            _sessionService.ClearSession();
-            await Shell.Current.GoToAsync("//LoginPage");
+            if (IsBusy) return;
+            IsBusy = true;
+
+            try
+            {
+                _sessionService.ClearSession();
+                MainThread.BeginInvokeOnMainThread(() => App.Current!.MainPage = new AppShell());
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Logout failed: {ex.Message}";
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
@@ -114,28 +134,33 @@ namespace NMC.Mobile.ViewModel
             if (IsBusy) return;
 
             bool confirm = await Shell.Current.DisplayAlertAsync("Delete Account", "Are you sure you want to permanently delete your account?", "Yes, Delete", "Cancel");
-
             if (!confirm) return;
 
             IsBusy = true;
             ErrorMessage = string.Empty;
 
-            var userIdStr = await _sessionService.GetUserIdAsync();
-            if (int.TryParse(userIdStr, out int userId))
+            try
             {
-                bool success = await _authService.DeleteAccountAsync(userId);
+                var userId = await GetCurrentUserIdAsync();
+                if (userId == null) return;
+
+                bool success = await _authService.DeleteAccountAsync(userId.Value);
                 if (success)
                 {
                     _sessionService.ClearSession();
-                    await Shell.Current.GoToAsync("//LoginPage");
+                    MainThread.BeginInvokeOnMainThread(() => App.Current!.MainPage = new AppShell());
                 }
                 else
                 {
-                    ErrorMessage = "Failed to delete account.";
+                    ErrorMessage = "Failed to delete account on the server.";
+                    IsBusy = false;
                 }
             }
-
-            IsBusy = false;
+            catch (Exception ex)
+            {
+                ErrorMessage = $"An error occurred: {ex.Message}";
+                IsBusy = false;
+            }
         }
 
         public async Task InitializeAsync()
@@ -144,12 +169,22 @@ namespace NMC.Mobile.ViewModel
             if (!string.IsNullOrEmpty(storedUsername))
             {
                 Username = storedUsername;
+                return;
             }
-            else
+
+            var userIdStr = await _sessionService.GetUserIdAsync();
+            Username = !string.IsNullOrEmpty(userIdStr) ? $"User #{userIdStr}" : "User";
+        }
+
+        private async Task<int?> GetCurrentUserIdAsync()
+        {
+            var userIdStr = await _sessionService.GetUserIdAsync();
+            if (int.TryParse(userIdStr, out int userId))
             {
-                var userIdStr = await _sessionService.GetUserIdAsync();
-                Username = !string.IsNullOrEmpty(userIdStr) ? $"User #{userIdStr}" : "User";
+                return userId;
             }
+            ErrorMessage = "Invalid user session!";
+            return null;
         }
     }
 }

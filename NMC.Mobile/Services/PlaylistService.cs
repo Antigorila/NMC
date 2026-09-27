@@ -39,11 +39,12 @@ namespace NMC.Mobile.Services
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<PlaylistModel>>($"api/playlists?userId={userId}") ?? new();
+                var result = await _httpClient.GetFromJsonAsync<List<PlaylistModel>>($"api/playlists?userId={userId}");
+                return result ?? new List<PlaylistModel>();
             }
             catch (Exception)
             {
-                return new();
+                return new List<PlaylistModel>();
             }
         }
     }

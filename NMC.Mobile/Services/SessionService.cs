@@ -45,6 +45,7 @@ namespace NMC.Mobile.Services
         {
             SecureStorage.Default.Remove(TokenKey);
             SecureStorage.Default.Remove(UserIdKey);
+            SecureStorage.Default.Remove(UsernameKey);
         }
     }
 }

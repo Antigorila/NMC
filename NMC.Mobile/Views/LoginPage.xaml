@@ -5,28 +5,20 @@
              x:Class="NMC.Mobile.Views.LoginPage"
              x:DataType="vm:LoginViewModel"
              Title="Login"
-             BackgroundColor="#121212"
-             Shell.NavBarIsVisible="False">
+             BackgroundColor="#121212">
 
-    <ScrollView>
-        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" Padding="24" RowSpacing="16" VerticalOptions="Center">
-            <Label Text="NMC" FontSize="28" FontAttributes="Bold" TextColor="#FFFFFF" HorizontalOptions="Center" Grid.Row="0" />
-            
-            <Border Grid.Row="1" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="4">
-                <Entry Placeholder="Username" PlaceholderColor="#888888" TextColor="#FFFFFF" Text="{Binding Username}" />
-            </Border>
+    <Grid>
+        <ActivityIndicator IsRunning="{Binding IsCheckingSession}" IsVisible="{Binding IsCheckingSession}" HorizontalOptions="Center" VerticalOptions="Center" Color="White"/>
+        <ScrollView IsVisible="{Binding !IsCheckingSession}">
+            <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+                <Entry Placeholder="Username" Text="{Binding Username}" />
+                <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="True" />
 
-            <Border Grid.Row="2" Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="4">
-                <Entry Placeholder="Password" PlaceholderColor="#888888" TextColor="#FFFFFF" IsPassword="True" Text="{Binding Password}" />
-            </Border>
+                <Label Text="{Binding ErrorMessage}" TextColor="Red" FontSize="14" HorizontalOptions="Center" />
 
-            <Label Text="{Binding ErrorMessage}" TextColor="#FF5555" FontSize="14" HorizontalOptions="Center" Grid.Row="3"/>
-
-            <VerticalStackLayout Grid.Row="4" Spacing="12">
-                <Button Text="Login" Command="{Binding LoginCommand}" BackgroundColor="#2A2A2A" TextColor="#FFFFFF" CornerRadius="4" />
-                <Button Text="Register" Command="{Binding GoToRegisterCommand}" BackgroundColor="Transparent" TextColor="#888888" />
-                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#FFFFFF" HorizontalOptions="Center" />
+                <Button Text="Login" Command="{Binding LoginCommand}" BackgroundColor="#333333" TextColor="White" />
+                <Button Text="Register" Command="{Binding GoToRegisterCommand}" BackgroundColor="Transparent" TextColor="Gray" />
             </VerticalStackLayout>
-        </Grid>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

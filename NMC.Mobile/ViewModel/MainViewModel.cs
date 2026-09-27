@@ -1,12 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using NMC.Mobile.Helper;
 using NMC.Mobile.Models;
 using NMC.Mobile.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace NMC.Mobile.ViewModel
 {
@@ -24,34 +22,55 @@ namespace NMC.Mobile.ViewModel
         [ObservableProperty]
         private string _errorMessage = string.Empty;
 
+        private bool _hasLoadedOnce = false;
+
         public MainViewModel(PlaylistService playlistService, SessionService sessionService)
         {
             _playlistService = playlistService;
             _sessionService = sessionService;
+
+            WeakReferenceMessenger.Default.Register<PlaylistCreatedMessage>(this, (recipient, message) =>
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    if (message.Value != null)
+                    {
+                        Playlists.Add(message.Value);
+                    }
+                });
+            });
         }
 
-        public async Task LoadPlaylistsAsync()
+        public async Task LoadPlaylistsOnceAsync()
         {
+            if (_hasLoadedOnce && Playlists.Count > 0) return;
             if (IsBusy) return;
+
             IsBusy = true;
             ErrorMessage = string.Empty;
 
             try
             {
                 var userIdStr = await _sessionService.GetUserIdAsync();
-                if (!int.TryParse(userIdStr, out int userId))
+                if (string.IsNullOrWhiteSpace(userIdStr) || !int.TryParse(userIdStr, out int userId))
                 {
                     ErrorMessage = "Invalid user session!";
                     return;
                 }
 
-                var playlists = await _playlistService.GetPlaylistsAsync(userId);
+                var playlists = await _playlistService.GetPlaylistsAsync(userId) ?? new List<PlaylistModel>();
+                var validPlaylists = playlists.Where(p => p != null).ToList();
 
-                Playlists.Clear();
-                foreach (var playlist in playlists)
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    Playlists.Add(playlist);
-                }
+                    Playlists.Clear();
+                    foreach (var playlist in validPlaylists)
+                    {
+                        Playlists.Add(playlist);
+                    }
+                });
+
+                _hasLoadedOnce = true;
             }
             catch (Exception ex)
             {
@@ -67,7 +86,6 @@ namespace NMC.Mobile.ViewModel
         private async Task SelectPlaylistAsync(PlaylistModel playlist)
         {
             if (playlist == null) return;
-
             await Shell.Current.GoToAsync($"PlaylistViewPage?playlistId={playlist.Id}");
         }
     }

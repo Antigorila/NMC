@@ -27,6 +27,9 @@ namespace NMC.Mobile
             builder.Services.AddSingleton<SessionService>();
             builder.Services.AddSingleton<AuthenticationService>();
 
+            //builder.Services.AddSingleton<MainViewModel>();
+            builder.Services.AddTransient<MainViewModel>();
+
             // --- Service ---
             builder.Services.AddSingleton<MediaService>();
             builder.Services.AddTransient<TrackService>();
@@ -35,7 +38,6 @@ namespace NMC.Mobile
             // --- ViewModel ---
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
-            builder.Services.AddTransient<MainViewModel>();
             builder.Services.AddTransient<ProfileViewModel>();
             builder.Services.AddTransient<AddMusicViewModel>();
             builder.Services.AddTransient<CreatePlaylistViewModel>();
