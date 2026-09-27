@@ -48,40 +48,39 @@ namespace NMC.Mobile.ViewModel
             IsBusy = true;
             ErrorMessage = string.Empty;
 
-            var result = await _authService.LoginAsync(Username, Password);
-
-            if (result != null)
+            try
             {
+                var result = await _authService.LoginAsync(Username, Password);
+                if (result == null)
+                {
+                    ErrorMessage = "This password or username seems wrong...";
+                    return;
+                }
+
                 await _sessionService.SaveSessionAsync(result.Token, result.UserId.ToString(), result.Username);
                 await Shell.Current.GoToAsync(nameof(MainPage));
             }
-            else
+            finally
             {
-                ErrorMessage = "This password or username seems wrong...";
+                IsBusy = false;
             }
-
-            IsBusy = false;
         }
 
         [RelayCommand]
-        private async Task GoToRegisterAsync()
-        {
-            await Shell.Current.GoToAsync(nameof(Views.RegisterPage));
-        }
+        private async Task GoToRegisterAsync() => await Shell.Current.GoToAsync(nameof(Views.RegisterPage));
 
         public async Task CheckExistingSessionAsync()
         {
-            if (await _sessionService.IsLoggedInAsync())
-            {
-                var currentRoute = Shell.Current.CurrentState.Location.OriginalString;
-                if (!currentRoute.Contains(nameof(MainPage)))
-                {
-                    await Shell.Current.GoToAsync(nameof(MainPage));
-                }
-            }
-            else
+            if (!await _sessionService.IsLoggedInAsync())
             {
                 IsCheckingSession = false;
+                return;
+            }
+
+            var currentRoute = Shell.Current.CurrentState.Location.OriginalString;
+            if (!currentRoute.Contains(nameof(MainPage)))
+            {
+                await Shell.Current.GoToAsync(nameof(MainPage));
             }
         }
     }
