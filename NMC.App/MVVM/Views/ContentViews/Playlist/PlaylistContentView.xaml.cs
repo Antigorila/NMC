@@ -7,9 +7,4 @@ public partial class PlaylistContentView : ContentView
 	{
 		InitializeComponent();
 	}
-
-    private void BackBtn_Clicked(object sender, EventArgs e)
-    {
-        OnBackRequested?.Invoke(this, EventArgs.Empty);
-    }
 }
