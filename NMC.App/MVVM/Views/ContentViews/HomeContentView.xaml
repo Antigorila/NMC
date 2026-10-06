@@ -6,6 +6,8 @@
     <VerticalStackLayout Padding="20" Spacing="15">
         <Label Text="MAIN PAGE (Home)" TextColor="White" FontSize="18"/>
         <Button Text="Profile" Command="{Binding GoToProfileCommand}"/>
+        <Button Text="Playlists" Command="{Binding GoToPlaylistsCommand}"/>
+        <Button Text="Tracks" Command="{Binding GoToTracksCommand}"/>
     </VerticalStackLayout>
 
 </ContentView>

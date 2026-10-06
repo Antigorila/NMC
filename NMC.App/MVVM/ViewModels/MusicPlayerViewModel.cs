@@ -32,11 +32,25 @@ namespace NMC.App.MVVM.ViewModels
         [RelayCommand]
         public void GoToProfile()
         {
-            var profileView = new NMC.App.MVVM.Views.ProfileView();
+            var view = new NMC.App.MVVM.Views.ContentViews.Profile.ProfileContentView();
+            view.OnBackRequested += (s, e) => ShowHomeContent();
+            CurrentMainContent = view;
+        }
 
-            profileView.OnBackRequested += (s, e) => ShowHomeContent();
+        [RelayCommand]
+        public void GoToPlaylists()
+        {
+            var view = new NMC.App.MVVM.Views.ContentViews.Playlist.PlaylistContentView();
+            view.OnBackRequested += (s, e) => ShowHomeContent();
+            CurrentMainContent = view;
+        }
 
-            CurrentMainContent = profileView;
+        [RelayCommand]
+        public void GoToTracks()
+        {
+            var view = new NMC.App.MVVM.Views.ContentViews.Track.TrackContentView();
+            view.OnBackRequested += (s, e) => ShowHomeContent();
+            CurrentMainContent = view;
         }
 
         [RelayCommand]
