@@ -81,6 +81,9 @@
 	  <MauiXaml Update="MVVM\Views\ContentViews\Playlist\PlaylistContentView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="MVVM\Views\ContentViews\Playlist\PlaylistEditContentView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="MVVM\Views\ContentViews\Playlist\PlaylistListContentView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -34,6 +34,14 @@ namespace NMC.App.MVVM.ViewModels
         }
 
         [RelayCommand]
+        public void ShowPlaylistEdit()
+        {
+            var view = new NMC.App.MVVM.Views.ContentViews.Playlist.PlaylistEditContentView();
+            view.BindingContext = this;
+            CurrentPlaylistContent = view;
+        }
+
+        [RelayCommand]
         private void GoBackToHome()
         {
             OnBackToHomeRequested?.Invoke();
