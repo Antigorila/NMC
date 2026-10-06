@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NMC.App.MVVM.Views.HomeContentView">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <Label Text="MAIN PAGE (Home)" TextColor="White" FontSize="18"/>
+        <Button Text="Profile" Command="{Binding GoToProfileCommand}"/>
+    </VerticalStackLayout>
+
+</ContentView>

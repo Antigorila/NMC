@@ -16,4 +16,6 @@ builder.AddProject<Projects.NMC_ApiService>("nmc-api-service")
 
 builder.AddProject<Projects.NMC_Mobile>("nmc-mobile");
 
+builder.AddProject<Projects.NMC_App>("nmc-app");
+
 builder.Build().Run();

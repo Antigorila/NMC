@@ -35,15 +35,20 @@
                 </Grid>
             </Grid>
             <HorizontalStackLayout Grid.Row="3" HorizontalOptions="Center" Spacing="14" VerticalOptions="Center">
+                <Button Grid.Row="3" ImageSource="play_button.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="#333333"/>
+                <Button Grid.Row="3" ImageSource="addon.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="#333333"/>
+                <Button Grid.Row="3" ImageSource="shuffle_on.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="#333333"/>
+<!--
                 <Border BackgroundColor="#FFFFFF" WidthRequest="44" HeightRequest="44" Padding="12" Stroke="Transparent" StrokeShape="RoundRectangle 12">
                     <ImageButton Aspect="AspectFit" BackgroundColor="Transparent" Command="{Binding PlayPlaylistCommand}" HorizontalOptions="Fill" Source="play_button.png" VerticalOptions="Fill"/>
                 </Border>
                 <Border BackgroundColor="#1E1E1E" WidthRequest="44" HeightRequest="44" Padding="12" Stroke="#2A2A2A" StrokeShape="RoundRectangle 12" StrokeThickness="1">
-                    <ImageButton Aspect="AspectFit" BackgroundColor="Transparent" Command="{Binding AddTrackToPlaylistCommand}" HorizontalOptions="Fill" Source="addon.png" VerticalOptions="Fill"/>
+                    <Button BackgroundColor="Transparent" Command="{Binding AddTrackToPlaylistCommand}" HorizontalOptions="Fill" ImageSource="addon.png" VerticalOptions="Fill"/>
                 </Border>
                 <Border BackgroundColor="#1E1E1E" WidthRequest="44" HeightRequest="44" Padding="12" Stroke="#2A2A2A" StrokeShape="RoundRectangle 12" StrokeThickness="1">
-                    <ImageButton Aspect="AspectFit" BackgroundColor="Transparent" Command="{Binding ToggleShuffleCommand}" HorizontalOptions="Fill" Source="{Binding ShuffleIconSource}" VerticalOptions="Fill"/>
+                    <Button Command="{Binding ToggleShuffleCommand}" HorizontalOptions="Fill" ImageSource="shuffle_on.png" VerticalOptions="Fill"/>
                 </Border>
+-->
             </HorizontalStackLayout>
         </Grid>
         <CollectionView Grid.Row="1" ItemsSource="{Binding Playlist.Tracks}" Margin="16,0,16,16">

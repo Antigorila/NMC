@@ -83,8 +83,7 @@ namespace NMC.Mobile.ViewModel
             Playlist.PlaylistName = EditedPlaylistName.Trim();
             IsEditingName = false;
 
-            // Itt majd jöhet az API hívás a mentéshez, ha szükséges:
-            // await _playlistService.UpdatePlaylistNameAsync(Playlist.Id, Playlist.PlaylistName);
+            // TODO
         }
 
         [RelayCommand]
@@ -103,19 +102,19 @@ namespace NMC.Mobile.ViewModel
         [RelayCommand]
         private async Task ChangeCoverAsync()
         {
-            // TODO: Ide jön a képválasztó logika
+            // TODO
         }
 
         [RelayCommand]
         private void PlayPlaylist()
         {
-            // TODO: Lejátszás indítása
+            // TODO
         }
 
         [RelayCommand]
         private async Task AddTrackToPlaylistAsync()
         {
-            // TODO: Zene hozzáadása
+            // TODO
         }
 
         [RelayCommand]
