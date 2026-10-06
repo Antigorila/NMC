@@ -48,9 +48,12 @@ namespace NMC.App.MVVM.ViewModels
         [RelayCommand]
         public void GoToTracks()
         {
-            var view = new NMC.App.MVVM.Views.ContentViews.Track.TrackContentView();
-            view.OnBackRequested += (s, e) => ShowHomeContent();
-            CurrentMainContent = view;
+            var trackView = new NMC.App.MVVM.Views.ContentViews.Track.TrackContentView();
+            var trackViewModel = new TrackViewModel();
+
+            trackViewModel.OnBackToHomeRequested = () => ShowHomeContent();
+            trackView.BindingContext = trackViewModel;
+            CurrentMainContent = trackView;
         }
 
         [RelayCommand]

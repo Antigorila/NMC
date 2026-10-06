@@ -7,9 +7,4 @@ public partial class TrackContentView : ContentView
 	{
 		InitializeComponent();
 	}
-
-    private void BackBtn_Clicked(object sender, EventArgs e)
-    {
-        OnBackRequested?.Invoke(this, EventArgs.Empty);
-    }
 }
