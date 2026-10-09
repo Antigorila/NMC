@@ -39,10 +39,13 @@ namespace NMC.App.MVVM.ViewModels
 
         [RelayCommand]
         public void GoToPlaylists()
-        {
-            var view = new NMC.App.MVVM.Views.ContentViews.Playlist.PlaylistContentView();
-            view.OnBackRequested += (s, e) => ShowHomeContent();
-            CurrentMainContent = view;
+        {            
+            var playlistView = new NMC.App.MVVM.Views.ContentViews.Playlist.PlaylistContentView();
+            var playlistViewModel = new PlaylistViewModel();
+
+            playlistViewModel.OnBackToHomeRequested = () => ShowHomeContent();
+            playlistView.BindingContext = playlistViewModel;
+            CurrentMainContent = playlistView;
         }
 
         [RelayCommand]
