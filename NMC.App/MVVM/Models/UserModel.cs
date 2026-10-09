@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace NMC.App.MVVM.Models
 {
-    partial class UserModel : ObservableObject
+    public partial class UserModel : ObservableObject
     {
         [ObservableProperty]
         private int id;
