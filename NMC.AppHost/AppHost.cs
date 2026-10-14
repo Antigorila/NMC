@@ -14,8 +14,6 @@ builder.AddProject<Projects.NMC_ApiService>("nmc-api-service")
        .WaitFor(database)
        .WithHttpEndpoint(port: 5000, name: "http");
 
-builder.AddProject<Projects.NMC_Mobile>("nmc-mobile");
-
-builder.AddProject<Projects.NMC_App>("nmc-app");
+builder.AddProject<Projects.NMC_Client>("nmc-client");
 
 builder.Build().Run();
