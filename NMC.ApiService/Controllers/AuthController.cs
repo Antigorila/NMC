@@ -27,8 +27,7 @@ namespace NMC.ApiService.Controllers
                 return BadRequest("You must enter both the username and password.");
             }
 
-            bool userExists = await _context.Users
-                .AnyAsync(u => u.Username == dto.Username, cancellationToken);
+            bool userExists = await _context.Users.AnyAsync(u => u.Username == dto.Username, cancellationToken);
 
             if (userExists)
             {

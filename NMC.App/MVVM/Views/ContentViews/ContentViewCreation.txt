@@ -1,0 +1,21 @@
+1) Add a new .NET MAUI ContentView (XAML) into the Model's folder
+
+2) Make sure to add a Back Button
+	- For the Back Button use an event handler: public event EventHandler OnBackRequested;
+	- And invoke it in the Back Button's Clicked event handler:
+		private void BackButton_Clicked(object sender, EventArgs e)
+		{
+			OnBackRequested?.Invoke(this, EventArgs.Empty);
+		}	
+
+3) In the ViewModels/MusicPlayerViewModel.cs create a new GoTo relay command:
+	[RelayCommand]
+	public void GoTo{ContentView}()
+	{
+		var view = new NMC.App.MVVM.Views.ContentViews.{Folder}.{ContentView}();
+		view.OnBackRequested += (s, e) => ShowHomeContent();
+		CurrentMainContent = view;
+	}
+
+4) Go back to the Home Views/HomeContentView.xaml and add a new button to navigate to the new ContentView:
+	<Button Text="Go To {ContentView}" Command="{Binding GoTo{ContentView}Command}" />
