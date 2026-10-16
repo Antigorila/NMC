@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             x:Class="NMC.Client.Views.PlaylistEditPage"
+             x:DataType="vm:PlaylistEditViewModel"
+             Title="{Binding PageTitle}"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="8">
+            <Label Text="{Binding PageTitle}" FontSize="22" FontAttributes="Bold" />
+
+            <Image Source="{Binding CoverSource}" HeightRequest="120" WidthRequest="120" Aspect="AspectFill" HorizontalOptions="Start" />
+            <Button Text="Pick cover" Command="{Binding PickCoverCommand}" HorizontalOptions="Start" />
+
+            <Entry Placeholder="Playlist name" Text="{Binding Name}" />
+
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Save" Command="{Binding SaveCommand}" />
+                <Button Text="Cancel" Command="{Binding GoBackCommand}" />
+            </HorizontalStackLayout>
+
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

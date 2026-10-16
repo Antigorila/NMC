@@ -129,6 +129,11 @@ namespace NMC.ApiService.Controllers
                 return NotFound("User not found.");
             }
 
+            var playlistTracks = await _context.PlaylistTracks
+                .Where(pt => pt.UserTrack.UserId == id || pt.Playlist.UserId == id)
+                .ToListAsync(cancellationToken);
+
+            _context.PlaylistTracks.RemoveRange(playlistTracks);
             _context.Users.Remove(user);
             await _context.SaveChangesAsync(cancellationToken);
 

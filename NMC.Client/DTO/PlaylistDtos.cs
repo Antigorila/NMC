@@ -19,5 +19,6 @@
     );
 
     public record CreatePlaylistDto(string PlaylistName, string? CoverPath);
+    public record UpdatePlaylistDto(string PlaylistName, string? CoverPath);
     public record AddTrackToPlaylistDto(int UserTrackId);
 }

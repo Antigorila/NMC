@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             x:Class="NMC.Client.Views.ProfilePage"
+             x:DataType="vm:ProfileViewModel"
+             Title="Profile"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="8">
+            <Label Text="{Binding Username, StringFormat='Username: {0}'}" FontSize="20" FontAttributes="Bold" />
+
+            <Label Text="Change username" FontAttributes="Bold" Margin="0,10,0,0" />
+            <Entry Placeholder="New username" Text="{Binding NewUsername}" />
+            <Button Text="Save username" Command="{Binding UpdateUsernameCommand}" HorizontalOptions="Start" />
+
+            <Label Text="Change password" FontAttributes="Bold" Margin="0,10,0,0" />
+            <Entry Placeholder="New password" Text="{Binding NewPassword}" IsPassword="True" />
+            <Button Text="Save password" Command="{Binding ChangePasswordCommand}" HorizontalOptions="Start" />
+
+            <Button Text="Logout" Command="{Binding LogoutCommand}" Margin="0,20,0,0" />
+            <Button Text="Delete account" Command="{Binding DeleteAccountCommand}" TextColor="Red" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

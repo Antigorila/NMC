@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:models="clr-namespace:NMC.Client.Models"
+             x:Class="NMC.Client.Views.PlaylistDetailPage"
+             x:DataType="vm:PlaylistDetailViewModel"
+             Title="Playlist"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="10" RowSpacing="8">
+        <Grid Grid.Row="0" ColumnDefinitions="100,*" ColumnSpacing="10">
+            <Image Grid.Column="0" Source="{Binding Playlist.CoverSource}" HeightRequest="100" WidthRequest="100" Aspect="AspectFill" />
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                <Label Text="{Binding Playlist.Name}" FontSize="20" FontAttributes="Bold" />
+                <Label Text="{Binding Playlist.TrackCount, StringFormat='{0} tracks'}" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <FlexLayout Grid.Row="1" Wrap="Wrap" JustifyContent="Start">
+            <Button Text="Play all" Command="{Binding PlayAllCommand}" Margin="2" />
+            <Button Text="Add tracks" Command="{Binding AddTracksCommand}" Margin="2" />
+            <Button Text="Edit" Command="{Binding EditPlaylistCommand}" Margin="2" />
+            <Button Text="Delete" Command="{Binding DeletePlaylistCommand}" Margin="2" />
+        </FlexLayout>
+
+        <Label Grid.Row="2" Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Playlist.Tracks}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedTrack}">
+            <CollectionView.EmptyView>
+                <Label Text="This playlist is empty." />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:TrackModel">
+                    <Border Margin="0,4" Padding="6" Stroke="Gray">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                                <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                <Label Text="{Binding Artist}" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1"
+                                    Text="Remove"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistDetailViewModel}}, Path=RemoveTrackCommand, x:DataType=vm:PlaylistDetailViewModel}"
+                                    CommandParameter="{Binding .}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <ActivityIndicator Grid.Row="3" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" VerticalOptions="Start" />
+    </Grid>
+
+</ContentPage>

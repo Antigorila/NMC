@@ -60,6 +60,25 @@ namespace NMC.ApiService.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{userTrackId:int}")]
+        public async Task<IActionResult> DeleteUserTrack(int userTrackId, CancellationToken cancellationToken)
+        {
+            var userTrack = await _context.UserTracks.FindAsync(new object[] { userTrackId }, cancellationToken);
+
+            if (userTrack == null)
+            {
+                return NotFound("We cant find the track you are looking for.");
+            }
+
+            var playlistTracks = await _context.PlaylistTracks.Where(pt => pt.UserTrackId == userTrackId).ToListAsync(cancellationToken);
+
+            _context.PlaylistTracks.RemoveRange(playlistTracks);
+            _context.UserTracks.Remove(userTrack);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return NoContent();
+        }
+
         [HttpPost("upload")]
         public async Task<IActionResult> UploadTrack([FromBody] CreateUserTrackRequestDto dto, CancellationToken cancellationToken)
         {

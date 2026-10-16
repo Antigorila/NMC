@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:models="clr-namespace:NMC.Client.Models"
+             x:Class="NMC.Client.Views.RecommendationPage"
+             x:DataType="vm:RecommendationViewModel"
+             Title="Recommendations"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <Grid RowDefinitions="Auto,*" Padding="10" RowSpacing="8">
+        <VerticalStackLayout Grid.Row="0" Spacing="6">
+            <Label Text="Reference playlist" />
+            <Picker Title="Select a playlist"
+                    ItemsSource="{Binding ReferencePlaylists}"
+                    ItemDisplayBinding="{Binding Name, x:DataType=models:PlaylistModel}"
+                    SelectedItem="{Binding SelectedReference}" />
+
+            <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                <Button Text="Recommend" Command="{Binding GenerateCommand}" Margin="2" />
+                <Button Text="Save as playlist" Command="{Binding SaveAsPlaylistCommand}" Margin="2" />
+            </FlexLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Results}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedResult}">
+            <CollectionView.EmptyView>
+                <Label Text="No recommendations yet." />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:TrackModel">
+                    <Border Margin="0,4" Padding="6" Stroke="Gray">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding Title}" FontAttributes="Bold" />
+                            <Label Text="{Binding Artist}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+
+</ContentPage>

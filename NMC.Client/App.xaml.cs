@@ -1,19 +1,18 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace NMC.Client;
-
-public partial class App : Application
+﻿namespace NMC.Client
 {
-    private readonly AppShell _shell;
-
-    public App(AppShell shell)
+    public partial class App : Application
     {
-        InitializeComponent();
-        _shell = shell;
-    }
+        private readonly AppShell _shell;
 
-    protected override Window CreateWindow(IActivationState? activationState)
-    {
-        return new Window(_shell);
+        public App(AppShell shell)
+        {
+            InitializeComponent();
+            _shell = shell;
+        }
+
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            return new Window(_shell);
+        }
     }
 }
