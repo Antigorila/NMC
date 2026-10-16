@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:models="clr-namespace:NMC.Client.Models"
+             x:Class="NMC.Client.Views.LibraryPage"
+             x:DataType="vm:LibraryViewModel"
+             Title="Library"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="10" RowSpacing="8">
+        <Button Grid.Row="0" Text="Add track" Command="{Binding OpenAddTrackCommand}" HorizontalOptions="Start" />
+        <Label Grid.Row="1" Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Tracks}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedTrack}">
+            <CollectionView.EmptyView>
+                <Label Text="Your library is empty." />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:TrackModel">
+                    <Border Margin="0,4" Padding="6" Stroke="Gray">
+                        <Grid ColumnDefinitions="50,*" ColumnSpacing="10">
+                            <Image Grid.Column="0" Source="{Binding CoverSource}" HeightRequest="50" WidthRequest="50" Aspect="AspectFill" />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                <Label Text="{Binding Artist}" />
+                                <Label Text="{Binding TopGenre.Name, StringFormat='Top genre: {0}', TargetNullValue='-', FallbackValue='Top genre: -'}" FontSize="12" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <ActivityIndicator Grid.Row="2" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" VerticalOptions="Start" />
+    </Grid>
+
+</ContentPage>

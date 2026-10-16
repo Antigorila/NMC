@@ -478,5 +478,49 @@ namespace ApiTests
             Assert.That(dbUserTrack!.FilePath, Is.EqualTo("/music/existing.mp3"));
         }
         #endregion
+
+        #region DeleteUserTrack Tests
+
+        [Test]
+        public async Task DeleteUserTrack_NonExistentId_ReturnsNotFound()
+        {
+            // Arrange
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            // Act
+            var result = await controller.DeleteUserTrack(999, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        }
+
+        [Test]
+        public async Task DeleteUserTrack_ExistingId_RemovesUserTrackAndPlaylistEntriesButKeepsTrack()
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                setupContext.Tracks.Add(new Track { Id = 1, Title = "Song", Artist = "Artist" });
+                setupContext.UserTracks.Add(new UserTrack { Id = 10, UserId = 5, TrackId = 1, FilePath = "/music/song.mp3" });
+                setupContext.Playlists.Add(new Playlist { Id = 20, UserId = 5, PlaylistName = "List" });
+                setupContext.PlaylistTracks.Add(new PlaylistTrack { PlaylistId = 20, UserTrackId = 10 });
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            // Act
+            var result = await controller.DeleteUserTrack(10, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
+            Assert.That(await testContext.UserTracks.AnyAsync(ut => ut.Id == 10), Is.False);
+            Assert.That(await testContext.PlaylistTracks.AnyAsync(pt => pt.UserTrackId == 10), Is.False);
+            Assert.That(await testContext.Tracks.AnyAsync(t => t.Id == 1), Is.True);
+        }
+
+        #endregion
     }
 }

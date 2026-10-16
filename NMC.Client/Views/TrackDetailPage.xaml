@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:models="clr-namespace:NMC.Client.Models"
+             x:Class="NMC.Client.Views.TrackDetailPage"
+             x:DataType="vm:TrackDetailViewModel"
+             Title="Track"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="6">
+            <Image Source="{Binding Track.CoverSource}" HeightRequest="150" WidthRequest="150" Aspect="AspectFill" HorizontalOptions="Start" />
+            <Label Text="{Binding Track.Title}" FontSize="22" FontAttributes="Bold" />
+            <Label Text="{Binding Track.Artist}" FontSize="16" />
+            <Label Text="{Binding Track.IsFileAvailable, StringFormat='File on this device: {0}'}" FontSize="12" />
+
+            <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                <Button Text="Play" Command="{Binding PlayCommand}" Margin="2" />
+                <Button Text="Change cover" Command="{Binding ChangeCoverCommand}" Margin="2" />
+                <Button Text="Share" Command="{Binding ShareCommand}" Margin="2" />
+                <Button Text="Delete" Command="{Binding DeleteTrackCommand}" Margin="2" />
+            </FlexLayout>
+
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                <Picker Grid.Column="0"
+                        Title="Select a playlist"
+                        ItemsSource="{Binding Playlists}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=models:PlaylistModel}"
+                        SelectedItem="{Binding SelectedPlaylist}" />
+                <Button Grid.Column="1" Text="Add to playlist" Command="{Binding AddToPlaylistCommand}" />
+            </Grid>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+
+            <Label Text="Genres" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Track.GenreScores}" Spacing="4">
+                <BindableLayout.EmptyView>
+                    <Label Text="Not analysed yet." />
+                </BindableLayout.EmptyView>
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:ScoreModel">
+                        <Grid ColumnDefinitions="130,*,50" ColumnSpacing="6">
+                            <Label Grid.Column="0" Text="{Binding Name}" />
+                            <ProgressBar Grid.Column="1" Progress="{Binding Score}" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="{Binding Percent, StringFormat='{0}%'}" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Label Text="Acoustic attributes" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Track.AcousticScores}" Spacing="4">
+                <BindableLayout.EmptyView>
+                    <Label Text="Not analysed yet." />
+                </BindableLayout.EmptyView>
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:ScoreModel">
+                        <Grid ColumnDefinitions="130,*,50" ColumnSpacing="6">
+                            <Label Grid.Column="0" Text="{Binding Name}" />
+                            <ProgressBar Grid.Column="1" Progress="{Binding Score}" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="{Binding Percent, StringFormat='{0}%'}" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -328,5 +328,75 @@ namespace ApiTests
         }
 
         #endregion
+
+        #region UpdatePlaylist Tests
+
+        [Test]
+        public async Task UpdatePlaylist_EmptyName_ReturnsBadRequest()
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                setupContext.Playlists.Add(new Playlist { Id = 1, UserId = 10, PlaylistName = "Old name" });
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new PlaylistsController(testContext);
+
+            // Act
+            var result = await controller.UpdatePlaylist(1, new UpdatePlaylistDto("   ", null), CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+        }
+
+        [Test]
+        public async Task UpdatePlaylist_NonExistentId_ReturnsNotFound()
+        {
+            // Arrange
+            using var testContext = CreateContext();
+            var controller = new PlaylistsController(testContext);
+
+            // Act
+            var result = await controller.UpdatePlaylist(999, new UpdatePlaylistDto("New name", null), CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        }
+
+        [Test]
+        public async Task UpdatePlaylist_ValidData_UpdatesNameAndCoverAndReturnsTrackCount()
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                setupContext.Playlists.Add(new Playlist { Id = 1, UserId = 10, PlaylistName = "Old name" });
+                setupContext.PlaylistTracks.AddRange(
+                    new PlaylistTrack { PlaylistId = 1, UserTrackId = 100 },
+                    new PlaylistTrack { PlaylistId = 1, UserTrackId = 101 }
+                );
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new PlaylistsController(testContext);
+
+            // Act
+            var result = await controller.UpdatePlaylist(1, new UpdatePlaylistDto("  New name  ", "/covers/new.jpg"), CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var playlistDto = (result as OkObjectResult)!.Value as PlaylistDto;
+            Assert.That(playlistDto, Is.Not.Null);
+            Assert.That(playlistDto!.PlaylistName, Is.EqualTo("New name"));
+            Assert.That(playlistDto.CoverPath, Is.EqualTo("/covers/new.jpg"));
+            Assert.That(playlistDto.TrackCount, Is.EqualTo(2));
+
+            var dbPlaylist = await testContext.Playlists.FindAsync(1);
+            Assert.That(dbPlaylist!.PlaylistName, Is.EqualTo("New name"));
+        }
+
+        #endregion
     }
 }
