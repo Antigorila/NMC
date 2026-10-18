@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
+             x:Class="NMC.Client.Controls.PageHeader"
+             x:Name="Root"
+             x:DataType="controls:PageHeader">
+
+    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="8,8,16,4">
+        <ImageButton Grid.Column="0"
+                     Source="back.png"
+                     Style="{StaticResource IconButton}"
+                     Command="{Binding BackCommand, Source={x:Reference Root}}" />
+        <Label Grid.Column="1"
+               Text="{Binding Title, Source={x:Reference Root}}"
+               Style="{StaticResource SectionTitle}"
+               VerticalOptions="Center"
+               LineBreakMode="TailTruncation" />
+    </Grid>
+
+</ContentView>

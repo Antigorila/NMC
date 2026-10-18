@@ -2,55 +2,68 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
              xmlns:models="clr-namespace:NMC.Client.Models"
              x:Class="NMC.Client.Views.FilterPage"
              x:DataType="vm:FilterViewModel"
              Title="Filter"
              ControlTemplate="{StaticResource PlayerPageTemplate}">
 
-    <Grid RowDefinitions="Auto,*" Padding="10" RowSpacing="8">
-        <VerticalStackLayout Grid.Row="0" Spacing="6">
-            <Picker Title="Select a genre"
-                    ItemsSource="{Binding Genres}"
-                    ItemDisplayBinding="{Binding Name, x:DataType=models:CategoryModel}"
-                    SelectedItem="{Binding SelectedGenre}" />
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Filter" BackCommand="{Binding GoBackCommand}" />
 
-            <HorizontalStackLayout Spacing="8">
-                <Label Text="Hard filter" VerticalOptions="Center" />
-                <Switch IsToggled="{Binding IsHardFilter}" />
-            </HorizontalStackLayout>
-            <Label Text="{Binding ModeDescription}" FontSize="12" />
+        <Grid Grid.Row="1" RowDefinitions="Auto,Auto,*" Padding="16,8,16,0" RowSpacing="12">
+            <Border Grid.Row="0" Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Genre" Style="{StaticResource SectionTitle}" />
+                    <Picker Title="Select a genre"
+                            ItemsSource="{Binding Genres}"
+                            ItemDisplayBinding="{Binding Name, x:DataType=models:CategoryModel}"
+                            SelectedItem="{Binding SelectedGenre}" />
 
-            <Label Text="{Binding Threshold, StringFormat='Threshold: {0:P0}'}" IsVisible="{Binding IsSoftFilter}" />
-            <Slider Minimum="0" Maximum="1" Value="{Binding Threshold}" IsVisible="{Binding IsSoftFilter}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="Hard filter" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding IsHardFilter}" />
+                    </Grid>
+                    <Label Text="{Binding ModeDescription}" Style="{StaticResource Caption}" />
 
-            <FlexLayout Wrap="Wrap" JustifyContent="Start">
-                <Button Text="Apply filter" Command="{Binding ApplyFilterCommand}" Margin="2" />
-                <Button Text="Save as playlist" Command="{Binding SaveAsPlaylistCommand}" Margin="2" />
-            </FlexLayout>
+                    <VerticalStackLayout Spacing="0" IsVisible="{Binding IsSoftFilter}">
+                        <Label Text="{Binding Threshold, StringFormat='Threshold: {0:P0}'}" Style="{StaticResource Secondary}" />
+                        <Slider Minimum="0" Maximum="1" Value="{Binding Threshold}" />
+                    </VerticalStackLayout>
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
-            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
-        </VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0" Text="Save as playlist" Command="{Binding SaveAsPlaylistCommand}" />
+                        <Button Grid.Column="1" Text="Apply" Command="{Binding ApplyFilterCommand}" Style="{StaticResource PrimaryButton}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
 
-        <CollectionView Grid.Row="1"
-                        ItemsSource="{Binding Results}"
-                        SelectionMode="Single"
-                        SelectedItem="{Binding SelectedResult}">
-            <CollectionView.EmptyView>
-                <Label Text="No results yet." />
-            </CollectionView.EmptyView>
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:TrackModel">
-                    <Border Margin="0,4" Padding="6" Stroke="Gray">
-                        <VerticalStackLayout>
-                            <Label Text="{Binding Title}" FontAttributes="Bold" />
-                            <Label Text="{Binding Artist}" />
-                        </VerticalStackLayout>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            <VerticalStackLayout Grid.Row="1" Spacing="6">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+                <Label Text="Results" Style="{StaticResource SectionTitle}" />
+            </VerticalStackLayout>
+
+            <CollectionView Grid.Row="2"
+                            ItemsSource="{Binding Results}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedResult}">
+                <CollectionView.EmptyView>
+                    <Label Text="No results yet." Style="{StaticResource Secondary}" HorizontalOptions="Center" Margin="0,24" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TrackModel">
+                        <Border Style="{StaticResource ListItem}">
+                            <VerticalStackLayout Spacing="1">
+                                <Label Text="{Binding Title}" Style="{StaticResource ItemTitle}" />
+                                <Label Text="{Binding Artist}" Style="{StaticResource Secondary}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
     </Grid>
 
 </ContentPage>

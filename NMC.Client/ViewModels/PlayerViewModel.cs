@@ -14,14 +14,14 @@ namespace NMC.Client.ViewModels
         private TrackModel? currentTrack;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(PlayPauseText))]
+        [NotifyPropertyChangedFor(nameof(PlayPauseIcon))]
         private bool isPlaying;
 
         public bool HasTrack => CurrentTrack != null;
 
         public string NowPlayingText => CurrentTrack?.DisplayName ?? "Nothing is playing";
 
-        public string PlayPauseText => IsPlaying ? "Pause" : "Play";
+        public string PlayPauseIcon => IsPlaying ? "pause.png" : "play.png";
 
         public string CoverSource => CurrentTrack?.CoverSource ?? TrackModel.PlaceholderCover;
 

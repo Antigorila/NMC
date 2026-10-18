@@ -2,40 +2,54 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
              xmlns:models="clr-namespace:NMC.Client.Models"
              x:Class="NMC.Client.Views.LibraryPage"
              x:DataType="vm:LibraryViewModel"
              Title="Library"
              ControlTemplate="{StaticResource PlayerPageTemplate}">
 
-    <Grid RowDefinitions="Auto,Auto,*" Padding="10" RowSpacing="8">
-        <Button Grid.Row="0" Text="Add track" Command="{Binding OpenAddTrackCommand}" HorizontalOptions="Start" />
-        <Label Grid.Row="1" Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Library" BackCommand="{Binding GoBackCommand}" />
 
-        <CollectionView Grid.Row="2"
-                        ItemsSource="{Binding Tracks}"
-                        SelectionMode="Single"
-                        SelectedItem="{Binding SelectedTrack}">
-            <CollectionView.EmptyView>
-                <Label Text="Your library is empty." />
-            </CollectionView.EmptyView>
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:TrackModel">
-                    <Border Margin="0,4" Padding="6" Stroke="Gray">
-                        <Grid ColumnDefinitions="50,*" ColumnSpacing="10">
-                            <Image Grid.Column="0" Source="{Binding CoverSource}" HeightRequest="50" WidthRequest="50" Aspect="AspectFill" />
-                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Label Text="{Binding Title}" FontAttributes="Bold" />
-                                <Label Text="{Binding Artist}" />
-                                <Label Text="{Binding TopGenre.Name, StringFormat='Top genre: {0}', TargetNullValue='-', FallbackValue='Top genre: -'}" FontSize="12" />
-                            </VerticalStackLayout>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <Grid Grid.Row="1" RowDefinitions="Auto,Auto,*" Padding="16,8,16,0" RowSpacing="10">
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                <Label Grid.Column="0" Text="All tracks" Style="{StaticResource SectionTitle}" VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="Add track" ImageSource="add.png" Command="{Binding OpenAddTrackCommand}" Style="{StaticResource ChipButton}" />
+            </Grid>
 
-        <ActivityIndicator Grid.Row="2" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" VerticalOptions="Start" />
+            <Label Grid.Row="1" Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+
+            <CollectionView Grid.Row="2"
+                            ItemsSource="{Binding Tracks}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedTrack}">
+                <CollectionView.EmptyView>
+                    <Label Text="Your library is empty." Style="{StaticResource Secondary}" HorizontalOptions="Center" Margin="0,24" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TrackModel">
+                        <Border Style="{StaticResource ListItem}">
+                            <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
+                                <Border Grid.Column="0" Style="{StaticResource CoverFrame}" HeightRequest="48" WidthRequest="48">
+                                    <Image Source="{Binding CoverSource}" Aspect="AspectFill" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                                    <Label Text="{Binding Title}" Style="{StaticResource ItemTitle}" />
+                                    <Label Text="{Binding Artist}" Style="{StaticResource Secondary}" LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2"
+                                       Text="{Binding TopGenre.Name, TargetNullValue='-', FallbackValue='-'}"
+                                       Style="{StaticResource AccentCaption}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <ActivityIndicator Grid.Row="2" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" VerticalOptions="Start" />
+        </Grid>
     </Grid>
 
 </ContentPage>

@@ -2,28 +2,52 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
              x:Class="NMC.Client.Views.AddTrackPage"
              x:DataType="vm:AddTrackViewModel"
              Title="Add track"
              ControlTemplate="{StaticResource PlayerPageTemplate}">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="10" Spacing="8">
-            <Button Text="Pick audio file" Command="{Binding PickAudioFileCommand}" HorizontalOptions="Start" />
-            <Label Text="{Binding FilePath, StringFormat='File: {0}'}" IsVisible="{Binding HasFile}" FontSize="12" />
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Add track" BackCommand="{Binding GoBackCommand}" />
 
-            <Image Source="{Binding CoverSource}" HeightRequest="120" WidthRequest="120" Aspect="AspectFill" HorizontalOptions="Start" />
-            <Button Text="Pick cover" Command="{Binding PickCoverCommand}" HorizontalOptions="Start" />
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="14">
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Audio file" Style="{StaticResource SectionTitle}" />
+                        <Button Text="Pick audio file" ImageSource="audio_file.png" Command="{Binding PickAudioFileCommand}" Style="{StaticResource PrimaryButton}" />
+                        <Label Text="{Binding FilePath}" Style="{StaticResource Caption}" IsVisible="{Binding HasFile}" LineBreakMode="MiddleTruncation" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <Entry Placeholder="Title" Text="{Binding Title}" />
-            <Entry Placeholder="Artist" Text="{Binding Artist}" />
-            <Label Text="Title and artist are required." FontSize="12" />
+                <Border Style="{StaticResource Card}">
+                    <Grid ColumnDefinitions="120,*" ColumnSpacing="14">
+                        <Border Grid.Column="0" Style="{StaticResource CoverFrame}" HeightRequest="120" WidthRequest="120">
+                            <Image Source="{Binding CoverSource}" Aspect="AspectFill" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                            <Label Text="Cover" Style="{StaticResource SectionTitle}" />
+                            <Label Text="Taken from the MP3 if it has one." Style="{StaticResource Caption}" />
+                            <Button Text="Pick cover" ImageSource="image.png" Command="{Binding PickCoverCommand}" Style="{StaticResource ChipButton}" HorizontalOptions="Start" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
 
-            <Button Text="Upload and analyse" Command="{Binding UploadCommand}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Details" Style="{StaticResource SectionTitle}" />
+                        <Entry Placeholder="Title" Text="{Binding Title}" />
+                        <Entry Placeholder="Artist" Text="{Binding Artist}" />
+                        <Label Text="Title and artist are required." Style="{StaticResource Caption}" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
-            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
-        </VerticalStackLayout>
-    </ScrollView>
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+                <Button Text="Upload and analyse" ImageSource="upload.png" Command="{Binding UploadCommand}" Style="{StaticResource PrimaryButton}" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 
 </ContentPage>

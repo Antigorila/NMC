@@ -2,47 +2,58 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
              xmlns:models="clr-namespace:NMC.Client.Models"
              x:Class="NMC.Client.Views.RecommendationPage"
              x:DataType="vm:RecommendationViewModel"
              Title="Recommendations"
              ControlTemplate="{StaticResource PlayerPageTemplate}">
 
-    <Grid RowDefinitions="Auto,*" Padding="10" RowSpacing="8">
-        <VerticalStackLayout Grid.Row="0" Spacing="6">
-            <Label Text="Reference playlist" />
-            <Picker Title="Select a playlist"
-                    ItemsSource="{Binding ReferencePlaylists}"
-                    ItemDisplayBinding="{Binding Name, x:DataType=models:PlaylistModel}"
-                    SelectedItem="{Binding SelectedReference}" />
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Recommendations" BackCommand="{Binding GoBackCommand}" />
 
-            <FlexLayout Wrap="Wrap" JustifyContent="Start">
-                <Button Text="Recommend" Command="{Binding GenerateCommand}" Margin="2" />
-                <Button Text="Save as playlist" Command="{Binding SaveAsPlaylistCommand}" Margin="2" />
-            </FlexLayout>
+        <Grid Grid.Row="1" RowDefinitions="Auto,Auto,*" Padding="16,8,16,0" RowSpacing="12">
+            <Border Grid.Row="0" Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Reference playlist" Style="{StaticResource SectionTitle}" />
+                    <Label Text="Tracks closest to this playlist will be recommended." Style="{StaticResource Caption}" />
+                    <Picker Title="Select a playlist"
+                            ItemsSource="{Binding ReferencePlaylists}"
+                            ItemDisplayBinding="{Binding Name, x:DataType=models:PlaylistModel}"
+                            SelectedItem="{Binding SelectedReference}" />
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
-            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
-        </VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0" Text="Save as playlist" Command="{Binding SaveAsPlaylistCommand}" />
+                        <Button Grid.Column="1" Text="Recommend" Command="{Binding GenerateCommand}" Style="{StaticResource PrimaryButton}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
 
-        <CollectionView Grid.Row="1"
-                        ItemsSource="{Binding Results}"
-                        SelectionMode="Single"
-                        SelectedItem="{Binding SelectedResult}">
-            <CollectionView.EmptyView>
-                <Label Text="No recommendations yet." />
-            </CollectionView.EmptyView>
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:TrackModel">
-                    <Border Margin="0,4" Padding="6" Stroke="Gray">
-                        <VerticalStackLayout>
-                            <Label Text="{Binding Title}" FontAttributes="Bold" />
-                            <Label Text="{Binding Artist}" />
-                        </VerticalStackLayout>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            <VerticalStackLayout Grid.Row="1" Spacing="6">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+                <Label Text="Recommended tracks" Style="{StaticResource SectionTitle}" />
+            </VerticalStackLayout>
+
+            <CollectionView Grid.Row="2"
+                            ItemsSource="{Binding Results}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedResult}">
+                <CollectionView.EmptyView>
+                    <Label Text="No recommendations yet." Style="{StaticResource Secondary}" HorizontalOptions="Center" Margin="0,24" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TrackModel">
+                        <Border Style="{StaticResource ListItem}">
+                            <VerticalStackLayout Spacing="1">
+                                <Label Text="{Binding Title}" Style="{StaticResource ItemTitle}" />
+                                <Label Text="{Binding Artist}" Style="{StaticResource Secondary}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
     </Grid>
 
 </ContentPage>

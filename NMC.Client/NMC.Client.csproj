@@ -66,6 +66,28 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<MauiImage Update="Resources\Images\back.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\play.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\pause.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\skip_previous.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\skip_next.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\add.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\edit.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\share.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\close.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\image.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\audio_file.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\upload.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\library.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\filter.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\recommend.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\person.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\logout.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\chevron_right.svg" TintColor="#F4F4F5" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\delete.svg" TintColor="#F87171" BaseSize="24,24" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />

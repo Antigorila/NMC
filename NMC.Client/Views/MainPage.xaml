@@ -6,39 +6,51 @@
              x:Class="NMC.Client.Views.MainPage"
              x:DataType="vm:MainViewModel"
              Title="NMC"
+             Shell.NavBarIsVisible="False"
              ControlTemplate="{StaticResource PlayerPageTemplate}">
 
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="10" RowSpacing="8">
-        <Label Grid.Row="0" Text="{Binding Username, StringFormat='Logged in as: {0}'}" />
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="16" RowSpacing="14">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+            <VerticalStackLayout Grid.Column="0" Spacing="0">
+                <Label Text="Welcome back" Style="{StaticResource Secondary}" />
+                <Label Text="{Binding Username}" Style="{StaticResource PageTitle}" LineBreakMode="TailTruncation" />
+            </VerticalStackLayout>
+            <Button Grid.Column="1" Text="Profile" ImageSource="person.png" Command="{Binding OpenProfileCommand}" Style="{StaticResource ChipButton}" VerticalOptions="Center" />
+        </Grid>
 
-        <FlexLayout Grid.Row="1" Wrap="Wrap" JustifyContent="Start">
-            <Button Text="Library" Command="{Binding OpenLibraryCommand}" Margin="2" />
-            <Button Text="Add track" Command="{Binding OpenAddTrackCommand}" Margin="2" />
-            <Button Text="New playlist" Command="{Binding CreatePlaylistCommand}" Margin="2" />
-            <Button Text="Filter" Command="{Binding OpenFilterCommand}" Margin="2" />
-            <Button Text="Recommendations" Command="{Binding OpenRecommendationCommand}" Margin="2" />
-            <Button Text="Profile" Command="{Binding OpenProfileCommand}" Margin="2" />
-        </FlexLayout>
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+            <Button Grid.Row="0" Grid.Column="0" Text="Library" ImageSource="library.png" Command="{Binding OpenLibraryCommand}" Style="{StaticResource TileButton}" />
+            <Button Grid.Row="0" Grid.Column="1" Text="Add track" ImageSource="upload.png" Command="{Binding OpenAddTrackCommand}" Style="{StaticResource TileButton}" />
+            <Button Grid.Row="1" Grid.Column="0" Text="Filter" ImageSource="filter.png" Command="{Binding OpenFilterCommand}" Style="{StaticResource TileButton}" />
+            <Button Grid.Row="1" Grid.Column="1" Text="Recommendations" ImageSource="recommend.png" Command="{Binding OpenRecommendationCommand}" Style="{StaticResource TileButton}" />
+        </Grid>
 
-        <Label Grid.Row="2" Text="Playlists" FontSize="18" FontAttributes="Bold" />
-        <Label Grid.Row="3" Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+            <Label Grid.Column="0" Text="Your playlists" Style="{StaticResource SectionTitle}" VerticalOptions="Center" />
+            <Button Grid.Column="1" Text="New" ImageSource="add.png" Command="{Binding CreatePlaylistCommand}" Style="{StaticResource ChipButton}" />
+        </Grid>
+
+        <Label Grid.Row="3" Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
 
         <CollectionView Grid.Row="4"
                         ItemsSource="{Binding Playlists}"
                         SelectionMode="Single"
                         SelectedItem="{Binding SelectedPlaylist}">
             <CollectionView.EmptyView>
-                <Label Text="No playlists yet." />
+                <Label Text="No playlists yet. Create one with + New." Style="{StaticResource Secondary}" HorizontalOptions="Center" Margin="0,24" />
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:PlaylistModel">
-                    <Border Margin="0,4" Padding="6" Stroke="Gray">
-                        <Grid ColumnDefinitions="60,*" ColumnSpacing="10">
-                            <Image Grid.Column="0" Source="{Binding CoverSource}" HeightRequest="60" WidthRequest="60" Aspect="AspectFill" />
-                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Label Text="{Binding Name}" FontAttributes="Bold" />
-                                <Label Text="{Binding TrackCount, StringFormat='{0} tracks'}" />
+                    <Border Style="{StaticResource ListItem}">
+                        <Grid ColumnDefinitions="56,*,Auto" ColumnSpacing="12">
+                            <Border Grid.Column="0" Style="{StaticResource CoverFrame}" HeightRequest="56" WidthRequest="56">
+                                <Image Source="{Binding CoverSource}" Aspect="AspectFill" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding Name}" Style="{StaticResource ItemTitle}" />
+                                <Label Text="{Binding TrackCount, StringFormat='{0} tracks'}" Style="{StaticResource Secondary}" />
                             </VerticalStackLayout>
+                            <Image Grid.Column="2" Source="chevron_right.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" />
                         </Grid>
                     </Border>
                 </DataTemplate>

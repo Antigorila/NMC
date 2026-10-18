@@ -2,70 +2,93 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
              xmlns:models="clr-namespace:NMC.Client.Models"
              x:Class="NMC.Client.Views.TrackDetailPage"
              x:DataType="vm:TrackDetailViewModel"
              Title="Track"
              ControlTemplate="{StaticResource PlayerPageTemplate}">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="10" Spacing="6">
-            <Image Source="{Binding Track.CoverSource}" HeightRequest="150" WidthRequest="150" Aspect="AspectFill" HorizontalOptions="Start" />
-            <Label Text="{Binding Track.Title}" FontSize="22" FontAttributes="Bold" />
-            <Label Text="{Binding Track.Artist}" FontSize="16" />
-            <Label Text="{Binding Track.IsFileAvailable, StringFormat='File on this device: {0}'}" FontSize="12" />
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Track" BackCommand="{Binding GoBackCommand}" />
 
-            <FlexLayout Wrap="Wrap" JustifyContent="Start">
-                <Button Text="Play" Command="{Binding PlayCommand}" Margin="2" />
-                <Button Text="Change cover" Command="{Binding ChangeCoverCommand}" Margin="2" />
-                <Button Text="Share" Command="{Binding ShareCommand}" Margin="2" />
-                <Button Text="Delete" Command="{Binding DeleteTrackCommand}" Margin="2" />
-            </FlexLayout>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="14">
+                <Border Style="{StaticResource CoverFrame}" HeightRequest="200" WidthRequest="200" HorizontalOptions="Center">
+                    <Image Source="{Binding Track.CoverSource}" Aspect="AspectFill" />
+                </Border>
 
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
-                <Picker Grid.Column="0"
-                        Title="Select a playlist"
-                        ItemsSource="{Binding Playlists}"
-                        ItemDisplayBinding="{Binding Name, x:DataType=models:PlaylistModel}"
-                        SelectedItem="{Binding SelectedPlaylist}" />
-                <Button Grid.Column="1" Text="Add to playlist" Command="{Binding AddToPlaylistCommand}" />
-            </Grid>
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="{Binding Track.Title}" Style="{StaticResource PageTitle}" HorizontalTextAlignment="Center" />
+                    <Label Text="{Binding Track.Artist}" Style="{StaticResource Secondary}" FontSize="15" HorizontalTextAlignment="Center" />
+                    <Label Text="The audio file is not on this device." Style="{StaticResource Error}" HorizontalTextAlignment="Center" IsVisible="{Binding Track.IsFileMissing}" />
+                </VerticalStackLayout>
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
-            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+                <FlexLayout Wrap="Wrap" JustifyContent="Center">
+                    <Button Text="Play" ImageSource="play.png" Command="{Binding PlayCommand}" Style="{StaticResource PrimaryButton}" Margin="4" />
+                    <Button Text="Change cover" ImageSource="image.png" Command="{Binding ChangeCoverCommand}" Style="{StaticResource ChipButton}" Margin="4" />
+                    <Button Text="Share" ImageSource="share.png" Command="{Binding ShareCommand}" Style="{StaticResource ChipButton}" Margin="4" />
+                    <Button Text="Delete" ImageSource="delete.png" Command="{Binding DeleteTrackCommand}" Style="{StaticResource DangerButton}" Margin="4" />
+                </FlexLayout>
 
-            <Label Text="Genres" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
-            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Track.GenreScores}" Spacing="4">
-                <BindableLayout.EmptyView>
-                    <Label Text="Not analysed yet." />
-                </BindableLayout.EmptyView>
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate x:DataType="models:ScoreModel">
-                        <Grid ColumnDefinitions="130,*,50" ColumnSpacing="6">
-                            <Label Grid.Column="0" Text="{Binding Name}" />
-                            <ProgressBar Grid.Column="1" Progress="{Binding Score}" VerticalOptions="Center" />
-                            <Label Grid.Column="2" Text="{Binding Percent, StringFormat='{0}%'}" />
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Add to playlist" Style="{StaticResource SectionTitle}" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Picker Grid.Column="0"
+                                    Title="Select a playlist"
+                                    ItemsSource="{Binding Playlists}"
+                                    ItemDisplayBinding="{Binding Name, x:DataType=models:PlaylistModel}"
+                                    SelectedItem="{Binding SelectedPlaylist}" />
+                            <Button Grid.Column="1" Text="Add" ImageSource="add.png" Command="{Binding AddToPlaylistCommand}" Style="{StaticResource PrimaryButton}" />
                         </Grid>
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
 
-            <Label Text="Acoustic attributes" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
-            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Track.AcousticScores}" Spacing="4">
-                <BindableLayout.EmptyView>
-                    <Label Text="Not analysed yet." />
-                </BindableLayout.EmptyView>
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate x:DataType="models:ScoreModel">
-                        <Grid ColumnDefinitions="130,*,50" ColumnSpacing="6">
-                            <Label Grid.Column="0" Text="{Binding Name}" />
-                            <ProgressBar Grid.Column="1" Progress="{Binding Score}" VerticalOptions="Center" />
-                            <Label Grid.Column="2" Text="{Binding Percent, StringFormat='{0}%'}" />
-                        </Grid>
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Genres" Style="{StaticResource SectionTitle}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Track.GenreScores}" Spacing="8">
+                            <BindableLayout.EmptyView>
+                                <Label Text="Not analysed yet." Style="{StaticResource Secondary}" />
+                            </BindableLayout.EmptyView>
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:ScoreModel">
+                                    <Grid ColumnDefinitions="120,*,44" ColumnSpacing="8">
+                                        <Label Grid.Column="0" Text="{Binding Name}" VerticalOptions="Center" />
+                                        <ProgressBar Grid.Column="1" Progress="{Binding Score}" VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Text="{Binding Percent, StringFormat='{0}%'}" Style="{StaticResource Secondary}" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Acoustic attributes" Style="{StaticResource SectionTitle}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Track.AcousticScores}" Spacing="8">
+                            <BindableLayout.EmptyView>
+                                <Label Text="Not analysed yet." Style="{StaticResource Secondary}" />
+                            </BindableLayout.EmptyView>
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:ScoreModel">
+                                    <Grid ColumnDefinitions="120,*,44" ColumnSpacing="8">
+                                        <Label Grid.Column="0" Text="{Binding Name}" VerticalOptions="Center" />
+                                        <ProgressBar Grid.Column="1" Progress="{Binding Score}" VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Text="{Binding Percent, StringFormat='{0}%'}" Style="{StaticResource Secondary}" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
             </VerticalStackLayout>
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 
 </ContentPage>

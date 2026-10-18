@@ -32,6 +32,8 @@ namespace NMC.Client.Models
 
         public bool IsFileAvailable => !string.IsNullOrWhiteSpace(FilePath) && File.Exists(FilePath);
 
+        public bool IsFileMissing => !IsFileAvailable;
+
         public ScoreModel? TopGenre => GenreScores.Count == 0 ? null : GenreScores.MaxBy(g => g.Score);
 
         public string DisplayName => $"{Artist} - {Title}";

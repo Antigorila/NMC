@@ -5,14 +5,25 @@
              x:Class="NMC.Client.Controls.MiniPlayerView"
              x:DataType="vm:PlayerViewModel">
 
-    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6" Padding="8" BackgroundColor="LightGray">
-        <Label Grid.Column="0" Text="{Binding NowPlayingText}" VerticalOptions="Center" LineBreakMode="TailTruncation">
-            <Label.GestureRecognizers>
+    <Grid RowDefinitions="1,Auto" BackgroundColor="{StaticResource SurfaceRaised}">
+        <BoxView Grid.Row="0" Color="{StaticResource Outline}" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="12,8">
+            <Grid.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding OpenNowPlayingCommand}" />
-            </Label.GestureRecognizers>
-        </Label>
-        <Button Grid.Column="1" Text="{Binding PlayPauseText}" Command="{Binding TogglePlayCommand}" />
-        <Button Grid.Column="2" Text="Open" Command="{Binding OpenNowPlayingCommand}" />
+            </Grid.GestureRecognizers>
+
+            <Border Grid.Column="0" Style="{StaticResource CoverFrame}" HeightRequest="44" WidthRequest="44">
+                <Image Source="{Binding CoverSource}" Aspect="AspectFill" />
+            </Border>
+
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                <Label Text="{Binding NowPlayingText}" Style="{StaticResource ItemTitle}" />
+                <Label Text="Tap to open the player" Style="{StaticResource Caption}" />
+            </VerticalStackLayout>
+
+            <ImageButton Grid.Column="2" Source="{Binding PlayPauseIcon}" Command="{Binding TogglePlayCommand}" Style="{StaticResource PlayIconButton}" VerticalOptions="Center" />
+        </Grid>
     </Grid>
 
 </ContentView>

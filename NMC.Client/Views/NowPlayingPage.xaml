@@ -2,21 +2,30 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
              x:Class="NMC.Client.Views.NowPlayingPage"
              x:DataType="vm:PlayerViewModel"
              Title="Now playing">
 
-    <VerticalStackLayout Padding="20" Spacing="12" VerticalOptions="Center">
-        <Image Source="{Binding CoverSource}" HeightRequest="220" WidthRequest="220" Aspect="AspectFill" HorizontalOptions="Center" />
-        <Label Text="{Binding NowPlayingText}" FontSize="20" HorizontalOptions="Center" />
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Now playing" BackCommand="{Binding GoBackCommand}" />
 
-        <Slider Minimum="0" Maximum="1" Value="0" IsEnabled="False" />
+        <Grid Grid.Row="1" RowDefinitions="*,Auto,Auto,Auto,*" Padding="24" RowSpacing="18">
+            <Border Grid.Row="1" Style="{StaticResource CoverFrame}" HeightRequest="280" WidthRequest="280" HorizontalOptions="Center" StrokeShape="RoundRectangle 16">
+                <Image Source="{Binding CoverSource}" Aspect="AspectFill" />
+            </Border>
 
-        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
-            <Button Text="Previous" Command="{Binding PreviousCommand}" />
-            <Button Text="{Binding PlayPauseText}" Command="{Binding TogglePlayCommand}" />
-            <Button Text="Next" Command="{Binding NextCommand}" />
-        </HorizontalStackLayout>
-    </VerticalStackLayout>
+            <VerticalStackLayout Grid.Row="2" Spacing="4">
+                <Label Text="{Binding NowPlayingText}" Style="{StaticResource SectionTitle}" HorizontalTextAlignment="Center" />
+                <Slider Minimum="0" Maximum="1" Value="0" IsEnabled="False" Margin="0,8,0,0" />
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="3" Spacing="16" HorizontalOptions="Center">
+                <ImageButton Source="skip_previous.png" Command="{Binding PreviousCommand}" Style="{StaticResource IconButton}" VerticalOptions="Center" />
+                <ImageButton Source="{Binding PlayPauseIcon}" Command="{Binding TogglePlayCommand}" Style="{StaticResource BigPlayIconButton}" />
+                <ImageButton Source="skip_next.png" Command="{Binding NextCommand}" Style="{StaticResource IconButton}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Grid>
+    </Grid>
 
 </ContentPage>
