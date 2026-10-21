@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NMC.DataAccess;
+using NMC.CNTK;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,9 @@ builder.Services.AddDbContext<NmcDbContext>(options => options.UseSqlServer(buil
 
 // Add controllers
 builder.Services.AddControllers();
+
+// Add audio classifier
+builder.Services.AddSingleton<IAudioClassifier, MockAudioClassifier>();
 
 var app = builder.Build();
 

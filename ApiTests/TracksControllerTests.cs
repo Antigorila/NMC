@@ -255,5 +255,174 @@ namespace ApiTests
         }
 
         #endregion
+
+        #region DeleteUserTrack Tests
+
+        [Test]
+        public async Task DeleteUserTrack_NonExistentId_ReturnsNotFound()
+        {
+            // Arrange
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            // Act
+            var result = await controller.DeleteUserTrack(999, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        }
+
+        [Test]
+        public async Task DeleteUserTrack_ExistingId_RemovesUserTrackAndPlaylistEntriesButKeepsTrack()
+        {
+            // Arrange
+            using (var setupContext = CreateContext())
+            {
+                setupContext.Tracks.Add(new Track { Id = 1, Title = "Song", Artist = "Artist" });
+                setupContext.UserTracks.Add(new UserTrack { Id = 10, UserId = 5, TrackId = 1, FilePath = "/music/song.mp3" });
+                setupContext.Playlists.Add(new Playlist { Id = 20, UserId = 5, PlaylistName = "List" });
+                setupContext.PlaylistTracks.Add(new PlaylistTrack { PlaylistId = 20, UserTrackId = 10 });
+                await setupContext.SaveChangesAsync();
+            }
+
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            // Act
+            var result = await controller.DeleteUserTrack(10, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
+            Assert.That(await testContext.UserTracks.AnyAsync(ut => ut.Id == 10), Is.False);
+            Assert.That(await testContext.PlaylistTracks.AnyAsync(pt => pt.UserTrackId == 10), Is.False);
+            Assert.That(await testContext.Tracks.AnyAsync(t => t.Id == 1), Is.True);
+        }
+
+        #endregion
+
+        #region FilterTracks Tests
+
+        private async Task SeedFilterDataAsync()
+        {
+            using var setupContext = CreateContext();
+
+            setupContext.Genres.AddRange(
+                new Genre { Id = 1, Name = "Metal" },
+                new Genre { Id = 2, Name = "Pop" }
+            );
+
+            setupContext.Tracks.AddRange(
+                new Track { Id = 1, Title = "Heavy", Artist = "Band A" },
+                new Track { Id = 2, Title = "Mixed", Artist = "Band B" },
+                new Track { Id = 3, Title = "Light", Artist = "Band C" }
+            );
+
+            setupContext.GenreScores.AddRange(
+                new GenreScore { TrackId = 1, GenreId = 1, Score = 0.9 },
+                new GenreScore { TrackId = 1, GenreId = 2, Score = 0.1 },
+                new GenreScore { TrackId = 2, GenreId = 1, Score = 0.4 },
+                new GenreScore { TrackId = 2, GenreId = 2, Score = 0.6 },
+                new GenreScore { TrackId = 3, GenreId = 1, Score = 0.2 },
+                new GenreScore { TrackId = 3, GenreId = 2, Score = 0.8 }
+            );
+
+            setupContext.UserTracks.AddRange(
+                new UserTrack { Id = 10, UserId = 5, TrackId = 1, FilePath = "/music/1.mp3" },
+                new UserTrack { Id = 11, UserId = 5, TrackId = 2, FilePath = "/music/2.mp3" },
+                new UserTrack { Id = 12, UserId = 5, TrackId = 3, FilePath = "/music/3.mp3" },
+                new UserTrack { Id = 20, UserId = 6, TrackId = 1, FilePath = "/music/other.mp3" }
+            );
+
+            await setupContext.SaveChangesAsync();
+        }
+
+        [Test]
+        public async Task FilterTracks_SoftFilter_ReturnsTracksAboveThresholdOrderedByScore()
+        {
+            // Arrange
+            await SeedFilterDataAsync();
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            // Act
+            var result = await controller.FilterTracks(5, new TrackFilterDto(1, false, 0.3), CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var tracks = (result as OkObjectResult)!.Value as List<UserTrackDto>;
+            Assert.That(tracks, Is.Not.Null);
+            Assert.That(tracks!.Count, Is.EqualTo(2));
+            Assert.That(tracks[0].UserTrackId, Is.EqualTo(10));
+            Assert.That(tracks[1].UserTrackId, Is.EqualTo(11));
+        }
+
+        [Test]
+        public async Task FilterTracks_HardFilter_ReturnsOnlyTracksWhereGenreIsTheTopScore()
+        {
+            // Arrange
+            await SeedFilterDataAsync();
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            // Act
+            var result = await controller.FilterTracks(5, new TrackFilterDto(2, true, 0), CancellationToken.None);
+
+            // Assert
+            var tracks = (result as OkObjectResult)!.Value as List<UserTrackDto>;
+            Assert.That(tracks, Is.Not.Null);
+            Assert.That(tracks!.Count, Is.EqualTo(2));
+            Assert.That(tracks[0].UserTrackId, Is.EqualTo(12));
+            Assert.That(tracks[1].UserTrackId, Is.EqualTo(11));
+        }
+
+        [Test]
+        public async Task FilterTracks_ReturnsOnlyTracksOfTheGivenUser()
+        {
+            // Arrange
+            await SeedFilterDataAsync();
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            // Act
+            var result = await controller.FilterTracks(6, new TrackFilterDto(1, false, 0), CancellationToken.None);
+
+            // Assert
+            var tracks = (result as OkObjectResult)!.Value as List<UserTrackDto>;
+            Assert.That(tracks, Is.Not.Null);
+            Assert.That(tracks!.Count, Is.EqualTo(1));
+            Assert.That(tracks[0].UserTrackId, Is.EqualTo(20));
+        }
+
+        [Test]
+        public async Task FilterTracks_ThresholdOutOfRange_ReturnsBadRequest()
+        {
+            // Arrange
+            await SeedFilterDataAsync();
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            // Act
+            var result = await controller.FilterTracks(5, new TrackFilterDto(1, false, 1.5), CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+        }
+
+        [Test]
+        public async Task FilterTracks_UnknownGenre_ReturnsBadRequest()
+        {
+            // Arrange
+            await SeedFilterDataAsync();
+            using var testContext = CreateContext();
+            var controller = new TracksController(testContext);
+
+            // Act
+            var result = await controller.FilterTracks(5, new TrackFilterDto(99, false, 0.1), CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+        }
+
+        #endregion
     }
 }

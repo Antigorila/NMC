@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
+             x:Class="NMC.Client.Views.NowPlayingPage"
+             x:DataType="vm:PlayerViewModel"
+             Title="Now playing">
+
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Now playing" BackCommand="{Binding GoBackCommand}" />
+
+        <Grid Grid.Row="1" RowDefinitions="*,Auto,Auto,Auto,*" Padding="24" RowSpacing="18">
+            <Border Grid.Row="1" Style="{StaticResource CoverFrame}" HeightRequest="280" WidthRequest="280" HorizontalOptions="Center" StrokeShape="RoundRectangle 16">
+                <Image Source="{Binding CoverSource}" Aspect="AspectFill" />
+            </Border>
+
+            <VerticalStackLayout Grid.Row="2" Spacing="4">
+                <Label Text="{Binding NowPlayingText}" Style="{StaticResource SectionTitle}" HorizontalTextAlignment="Center" />
+                <Slider Minimum="0"
+                        Maximum="{Binding SliderMaximum}"
+                        Value="{Binding Position}"
+                        IsEnabled="{Binding HasTrack}"
+                        DragStartedCommand="{Binding SeekStartedCommand}"
+                        DragCompletedCommand="{Binding SeekCompletedCommand}"
+                        Margin="0,8,0,0" />
+                <Grid ColumnDefinitions="*,*">
+                    <Label Grid.Column="0" Text="{Binding PositionText}" Style="{StaticResource Caption}" />
+                    <Label Grid.Column="1" Text="{Binding DurationText}" Style="{StaticResource Caption}" HorizontalTextAlignment="End" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="3" Spacing="16" HorizontalOptions="Center">
+                <ImageButton Source="{Binding ShuffleIcon}" Command="{Binding ToggleShuffleCommand}" Style="{StaticResource GhostIconButton}" VerticalOptions="Center" />
+                <ImageButton Source="skip_previous.png" Command="{Binding PreviousCommand}" Style="{StaticResource IconButton}" VerticalOptions="Center" />
+                <ImageButton Source="{Binding PlayPauseIcon}" Command="{Binding TogglePlayCommand}" Style="{StaticResource BigPlayIconButton}" />
+                <ImageButton Source="skip_next.png" Command="{Binding NextCommand}" Style="{StaticResource IconButton}" VerticalOptions="Center" />
+                <BoxView WidthRequest="40" HeightRequest="40" Color="{StaticResource Transparent}" />
+            </HorizontalStackLayout>
+        </Grid>
+    </Grid>
+
+</ContentPage>

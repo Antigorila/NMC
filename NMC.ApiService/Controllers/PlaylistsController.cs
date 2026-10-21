@@ -48,7 +48,7 @@ namespace NMC.ApiService.Controllers
             var newPlaylist = new Playlist
             {
                 UserId = userId,
-                PlaylistName = dto.PlaylistName,
+                PlaylistName = dto.PlaylistName.Trim(),
                 CoverPath = dto.CoverPath
             };
 
@@ -64,6 +64,38 @@ namespace NMC.ApiService.Controllers
             );
 
             return CreatedAtAction(nameof(GetPlaylistById), new { id = newPlaylist.Id }, resultDto);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdatePlaylist(int id, [FromBody] UpdatePlaylistDto dto, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(dto.PlaylistName))
+            {
+                return BadRequest("And how should we call the playlist?");
+            }
+
+            var playlist = await _context.Playlists.FindAsync(new object[] { id }, cancellationToken);
+
+            if (playlist == null)
+            {
+                return NotFound("Sorry, there is no such playlist.");
+            }
+
+            playlist.PlaylistName = dto.PlaylistName.Trim();
+            playlist.CoverPath = dto.CoverPath;
+            await _context.SaveChangesAsync(cancellationToken);
+
+            int trackCount = await _context.PlaylistTracks.CountAsync(pt => pt.PlaylistId == id, cancellationToken);
+
+            var resultDto = new PlaylistDto(
+                playlist.Id,
+                playlist.UserId,
+                playlist.PlaylistName,
+                playlist.CoverPath,
+                trackCount
+            );
+
+            return Ok(resultDto);
         }
 
         [HttpPost("{id:int}/tracks")]

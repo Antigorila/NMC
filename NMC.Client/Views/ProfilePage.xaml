@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
+             x:Class="NMC.Client.Views.ProfilePage"
+             x:DataType="vm:ProfileViewModel"
+             Title="Profile"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Profile" BackCommand="{Binding GoBackCommand}" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="14">
+                <VerticalStackLayout Spacing="0">
+                    <Label Text="Signed in as" Style="{StaticResource Secondary}" />
+                    <Label Text="{Binding Username}" Style="{StaticResource PageTitle}" />
+                </VerticalStackLayout>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Change username" Style="{StaticResource SectionTitle}" />
+                        <Entry Placeholder="New username" Text="{Binding NewUsername}" />
+                        <Button Text="Save username" Command="{Binding UpdateUsernameCommand}" Style="{StaticResource PrimaryButton}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Change password" Style="{StaticResource SectionTitle}" />
+                        <Entry Placeholder="New password" Text="{Binding NewPassword}" IsPassword="True" />
+                        <Button Text="Save password" Command="{Binding ChangePasswordCommand}" Style="{StaticResource PrimaryButton}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+                <Button Text="Logout" ImageSource="logout.png" Command="{Binding LogoutCommand}" Margin="0,10,0,0" />
+                <Button Text="Delete account" ImageSource="delete.png" Command="{Binding DeleteAccountCommand}" Style="{StaticResource DangerButton}" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

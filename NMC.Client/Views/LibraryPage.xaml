@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
+             xmlns:models="clr-namespace:NMC.Client.Models"
+             x:Class="NMC.Client.Views.LibraryPage"
+             x:DataType="vm:LibraryViewModel"
+             Title="Library"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Library" BackCommand="{Binding GoBackCommand}" />
+
+        <Grid Grid.Row="1" RowDefinitions="Auto,Auto,*" Padding="16,8,16,0" RowSpacing="10">
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                <Label Grid.Column="0" Text="All tracks" Style="{StaticResource SectionTitle}" VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="Add track" ImageSource="add.png" Command="{Binding OpenAddTrackCommand}" Style="{StaticResource ChipButton}" />
+            </Grid>
+
+            <Label Grid.Row="1" Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+
+            <CollectionView Grid.Row="2"
+                            ItemsSource="{Binding Tracks}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedTrack}">
+                <CollectionView.EmptyView>
+                    <Label Text="Your library is empty." Style="{StaticResource Secondary}" HorizontalOptions="Center" Margin="0,24" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TrackModel">
+                        <Border Style="{StaticResource ListItem}">
+                            <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
+                                <Border Grid.Column="0" Style="{StaticResource CoverFrame}" HeightRequest="48" WidthRequest="48">
+                                    <Image Source="{Binding CoverSource}" Aspect="AspectFill" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                                    <Label Text="{Binding Title}" Style="{StaticResource ItemTitle}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsPlaying}" Value="True">
+                                                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                    <Label Text="{Binding Artist}" Style="{StaticResource Secondary}" LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2"
+                                       Text="{Binding TopGenre.Name, TargetNullValue='-', FallbackValue='-'}"
+                                       Style="{StaticResource AccentCaption}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <ActivityIndicator Grid.Row="2" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" VerticalOptions="Start" />
+        </Grid>
+    </Grid>
+
+</ContentPage>

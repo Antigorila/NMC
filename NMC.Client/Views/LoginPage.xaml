@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             x:Class="NMC.Client.Views.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Title="Login"
+             Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <Grid RowDefinitions="*,Auto,*" Padding="24" MinimumHeightRequest="600">
+            <VerticalStackLayout Grid.Row="1" Spacing="12" MaximumWidthRequest="420">
+                <Label Text="NMC" FontSize="48" FontFamily="OpenSansSemibold" TextColor="{StaticResource Primary}" HorizontalOptions="Center" />
+                <Label Text="Neural Music Classifier" Style="{StaticResource Secondary}" HorizontalOptions="Center" />
+
+                <Border Style="{StaticResource Card}" Margin="0,24,0,0" Padding="18">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Sign in" Style="{StaticResource SectionTitle}" />
+                        <Entry Placeholder="Username" Text="{Binding Username}" />
+                        <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="True" />
+                        <Label Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+                        <Button Text="Login" Command="{Binding LoginCommand}" Style="{StaticResource PrimaryButton}" />
+                        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="Create an account" Command="{Binding GoToRegisterCommand}" Style="{StaticResource LinkButton}" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

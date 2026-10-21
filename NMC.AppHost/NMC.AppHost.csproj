@@ -10,11 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.5.4" />
+	  <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.6.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NMC.ApiService\NMC.ApiService.csproj" />
+    <ProjectReference Include="..\NMC.Client\NMC.Client.csproj">
+      <SetTargetFramework>TargetFramework=net10.0</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

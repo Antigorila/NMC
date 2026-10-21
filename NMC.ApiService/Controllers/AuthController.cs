@@ -27,8 +27,7 @@ namespace NMC.ApiService.Controllers
                 return BadRequest("You must enter both the username and password.");
             }
 
-            bool userExists = await _context.Users
-                .AnyAsync(u => u.Username == dto.Username, cancellationToken);
+            bool userExists = await _context.Users.AnyAsync(u => u.Username == dto.Username, cancellationToken);
 
             if (userExists)
             {
@@ -72,6 +71,73 @@ namespace NMC.ApiService.Controllers
             var response = new AuthResponseDto(user.Id, user.Username, token);
 
             return Ok(response);
+        }
+
+        [HttpPut("{id:int}/username")]
+        public async Task<IActionResult> UpdateUsername(int id, [FromBody] UpdateProfileRequestDto dto, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(dto.NewUsername))
+            {
+                return BadRequest("Username cannot be empty.");
+            }
+
+            var user = await _context.Users.FindAsync(new object[] { id }, cancellationToken);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            bool userExists = await _context.Users.AnyAsync(u => u.Username == dto.NewUsername && u.Id != id, cancellationToken);
+            if (userExists)
+            {
+                return BadRequest("Username is already taken.");
+            }
+
+            user.Username = dto.NewUsername;
+            await _context.SaveChangesAsync(cancellationToken);
+
+            string token = GenerateMockToken(user.Id, user.Username);
+            return Ok(new AuthResponseDto(user.Id, user.Username, token));
+        }
+
+        [HttpPut("{id:int}/password")]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordRequestDto dto, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(dto.NewPassword))
+            {
+                return BadRequest("New password cannot be empty.");
+            }
+
+            var user = await _context.Users.FindAsync(new object[] { id }, cancellationToken);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            user.PasswordHash = _passwordHasher.HashPassword(user, dto.NewPassword);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteAccount(int id, CancellationToken cancellationToken)
+        {
+            var user = await _context.Users.FindAsync(new object[] { id }, cancellationToken);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var playlistTracks = await _context.PlaylistTracks
+                .Where(pt => pt.UserTrack.UserId == id || pt.Playlist.UserId == id)
+                .ToListAsync(cancellationToken);
+
+            _context.PlaylistTracks.RemoveRange(playlistTracks);
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return NoContent();
         }
 
         #region Support Methods

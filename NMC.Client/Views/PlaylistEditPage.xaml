@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
+             x:Class="NMC.Client.Views.PlaylistEditPage"
+             x:DataType="vm:PlaylistEditViewModel"
+             Title="{Binding PageTitle}"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="{Binding PageTitle}" BackCommand="{Binding GoBackCommand}" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="14">
+
+                <Border Style="{StaticResource Card}">
+                    <Grid ColumnDefinitions="120,*" ColumnSpacing="14">
+                        <Border Grid.Column="0" Style="{StaticResource CoverFrame}" HeightRequest="120" WidthRequest="120">
+                            <Image Source="{Binding CoverSource}" Aspect="AspectFill" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                            <Label Text="Cover" Style="{StaticResource SectionTitle}" />
+                            <Button Text="Pick cover" ImageSource="image.png" Command="{Binding PickCoverCommand}" Style="{StaticResource ChipButton}" HorizontalOptions="Start" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Name" Style="{StaticResource SectionTitle}" />
+                        <Entry Placeholder="Playlist name" Text="{Binding Name}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0" Text="Cancel" Command="{Binding GoBackCommand}" />
+                    <Button Grid.Column="1" Text="Save" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" />
+                </Grid>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

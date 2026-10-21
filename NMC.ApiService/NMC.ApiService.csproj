@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NMC.CNTK\NMC.CNTK.csproj" />
     <ProjectReference Include="..\NMC.DataAccess\NMC.DataAccess.csproj" />
     <ProjectReference Include="..\NMC.ServiceDefaults\NMC.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.6.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.13" />
   </ItemGroup>
 
 </Project>

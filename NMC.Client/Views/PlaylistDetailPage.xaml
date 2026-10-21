@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NMC.Client.ViewModels"
+             xmlns:controls="clr-namespace:NMC.Client.Controls"
+             xmlns:models="clr-namespace:NMC.Client.Models"
+             x:Class="NMC.Client.Views.PlaylistDetailPage"
+             x:DataType="vm:PlaylistDetailViewModel"
+             Title="Playlist"
+             ControlTemplate="{StaticResource PlayerPageTemplate}">
+
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="Playlist" BackCommand="{Binding GoBackCommand}" />
+
+        <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto,*" Padding="16,8,16,0" RowSpacing="12">
+            <Grid Grid.Row="0" ColumnDefinitions="120,*" ColumnSpacing="14">
+                <Border Grid.Column="0" Style="{StaticResource CoverFrame}" HeightRequest="120" WidthRequest="120">
+                    <Image Source="{Binding Playlist.CoverSource}" Aspect="AspectFill" />
+                </Border>
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="End" Spacing="2">
+                    <Label Text="Playlist" Style="{StaticResource Caption}" />
+                    <Label Text="{Binding Playlist.Name}" Style="{StaticResource PageTitle}" LineBreakMode="TailTruncation" />
+                    <Label Text="{Binding Playlist.TrackCount, StringFormat='{0} tracks'}" Style="{StaticResource Secondary}" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <FlexLayout Grid.Row="1" Wrap="Wrap" JustifyContent="Start">
+                <Button Text="Play all" ImageSource="play.png" Command="{Binding PlayAllCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" />
+                <Button Text="Add tracks" ImageSource="add.png" Command="{Binding AddTracksCommand}" Style="{StaticResource ChipButton}" Margin="0,0,8,8" />
+                <Button Text="Edit" ImageSource="edit.png" Command="{Binding EditPlaylistCommand}" Style="{StaticResource ChipButton}" Margin="0,0,8,8" />
+                <Button Text="Delete" ImageSource="delete.png" Command="{Binding DeletePlaylistCommand}" Style="{StaticResource DangerButton}" Margin="0,0,8,8" />
+            </FlexLayout>
+
+            <Label Grid.Row="2" Text="{Binding ErrorMessage}" Style="{StaticResource Error}" IsVisible="{Binding HasError}" />
+
+            <CollectionView Grid.Row="3"
+                            ItemsSource="{Binding Playlist.Tracks}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedTrack}">
+                <CollectionView.EmptyView>
+                    <Label Text="This playlist is empty." Style="{StaticResource Secondary}" HorizontalOptions="Center" Margin="0,24" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TrackModel">
+                        <Border Style="{StaticResource ListItem}">
+                            <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="12">
+                                <Border Grid.Column="0" Style="{StaticResource CoverFrame}" HeightRequest="44" WidthRequest="44">
+                                    <Image Source="{Binding CoverSource}" Aspect="AspectFill" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                                    <Label Text="{Binding Title}" Style="{StaticResource ItemTitle}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsPlaying}" Value="True">
+                                                <Setter Property="TextColor" Value="{StaticResource Primary}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                    <Label Text="{Binding Artist}" Style="{StaticResource Secondary}" LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
+                                <ImageButton Grid.Column="2"
+                                        Source="close.png"
+                                        Style="{StaticResource GhostIconButton}"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistDetailViewModel}}, Path=RemoveTrackCommand, x:DataType={x:Null}}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <ActivityIndicator Grid.Row="3" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" VerticalOptions="Start" />
+        </Grid>
+    </Grid>
+
+</ContentPage>
