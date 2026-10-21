@@ -51,6 +51,19 @@ namespace NMC.Client.Services
                 return ApiResult<TResponse>.Failure(GetExceptionMessage(ex));
             }
         }
+
+        protected async Task<ApiResult<TResponse>> PostMultipartAsync<TResponse>(string url, MultipartFormDataContent content)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+                return await ReadResponseAsync<TResponse>(response);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<TResponse>.Failure(GetExceptionMessage(ex));
+            }
+        }
         #endregion
 
         #region Requests without response data

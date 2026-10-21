@@ -24,20 +24,6 @@ namespace NMC.Client.Mapping
                 GenreScores = MapScores(dto.GenreScores, s => s.ToModel()),
                 AcousticScores = MapScores(dto.AcousticScores, s => s.ToModel())
             };
-
-
-        public static TrackModel ToModel(this AnalysisUploadResponseDto dto, string filePath, string? coverPath)
-            => new()
-            {
-                UserTrackId = dto.UserTrackId,
-                TrackId = dto.TrackId,
-                Title = dto.Title,
-                Artist = dto.Artist,
-                FilePath = filePath,
-                CoverPath = coverPath,
-                GenreScores = MapScores(dto.GenreScores, s => s.ToModel()),
-                AcousticScores = MapScores(dto.AcousticScores, s => s.ToModel())
-            };
         #endregion
 
         #region Playlists

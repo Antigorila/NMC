@@ -3,7 +3,7 @@
     public static class ApiConfig
     {
         public const int Port = 5000;
-        public const int TimeoutSeconds = 15;
+        public const int TimeoutSeconds = 60;
 
         public static string BaseAddress
         {

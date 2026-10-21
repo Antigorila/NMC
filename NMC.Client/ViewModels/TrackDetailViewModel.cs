@@ -14,6 +14,7 @@ namespace NMC.Client.ViewModels
         private readonly TrackService _trackService;
         private readonly SessionService _sessionService;
         private readonly LocalFileService _localFileService;
+        private readonly MediaPickerService _mediaPickerService;
 
         public ObservableCollection<PlaylistModel> Playlists { get; } = new();
 
@@ -25,12 +26,13 @@ namespace NMC.Client.ViewModels
         [NotifyCanExecuteChangedFor(nameof(AddToPlaylistCommand))]
         private PlaylistModel? selectedPlaylist;
 
-        public TrackDetailViewModel(PlaylistService playlistService, TrackService trackService, SessionService sessionService, LocalFileService localFileService)
+        public TrackDetailViewModel(PlaylistService playlistService, TrackService trackService, SessionService sessionService, LocalFileService localFileService, MediaPickerService mediaPickerService)
         {
             _playlistService = playlistService;
             _trackService = trackService;
             _sessionService = sessionService;
             _localFileService = localFileService;
+            _mediaPickerService = mediaPickerService;
         }
 
         #region Loading
@@ -113,6 +115,42 @@ namespace NMC.Client.ViewModels
                 IsBusy = false;
             }
         }
+
+        [RelayCommand]
+        private async Task ChangeCover()
+        {
+            if (Track is null)
+            {
+                return;
+            }
+
+            ErrorMessage = string.Empty;
+
+            FileResult? pickedImage = await _mediaPickerService.PickImageAsync();
+            if (pickedImage is null)
+            {
+                return;
+            }
+
+            string? copiedPath = await _localFileService.CopyToAppFolderAsync(pickedImage, LocalFileService.CoversFolder);
+            if (copiedPath is null)
+            {
+                ErrorMessage = "The selected image could not be copied into the app.";
+                return;
+            }
+
+            ApiResult result = await _trackService.UpdateCoverAsync(Track.UserTrackId, copiedPath);
+
+            if (!result.IsSuccess)
+            {
+                _localFileService.DeleteAppFile(copiedPath);
+                ErrorMessage = result.ErrorMessage;
+                return;
+            }
+
+            _localFileService.DeleteAppFile(Track.CoverPath);
+            Track.CoverPath = copiedPath;
+        }
         #endregion
 
         #region Not implemented yet
@@ -120,12 +158,6 @@ namespace NMC.Client.ViewModels
         private void Play()
         {
             ShowNotImplemented("Playback");
-        }
-
-        [RelayCommand]
-        private void ChangeCover()
-        {
-            ShowNotImplemented("Changing the cover");
         }
 
         [RelayCommand]

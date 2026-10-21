@@ -19,15 +19,6 @@
         List<AcousticScoreDto> AcousticScores
     );
 
-    public record CreateUserTrackRequestDto
-    (
-        int UserId,
-        string Title,
-        string Artist,
-        string FilePath,
-        string? CoverPath
-    );
-
     public record GenreScoreDto(int GenreId, string GenreName, double Score);
     public record AcousticScoreDto(int AttributeId, string AttributeName, double Score);
     public record UpdateCoverDto(string CoverPath);

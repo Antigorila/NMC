@@ -42,6 +42,8 @@ namespace NMC.Client
             services.AddSingleton(httpClient);
             services.AddSingleton<SessionService>();
             services.AddSingleton<LocalFileService>();
+            services.AddSingleton<MediaPickerService>();
+            services.AddSingleton<AudioMetadataService>();
             services.AddSingleton<AuthService>();
             services.AddSingleton<TrackService>();
             services.AddSingleton<PlaylistService>();

@@ -11,6 +11,8 @@ namespace NMC.Client.ViewModels
     {
         private readonly PlaylistService _playlistService;
         private readonly SessionService _sessionService;
+        private readonly MediaPickerService _mediaPickerService;
+        private readonly LocalFileService _localFileService;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsEditMode))]
@@ -30,10 +32,12 @@ namespace NMC.Client.ViewModels
 
         public string CoverSource => string.IsNullOrWhiteSpace(CoverPath) ? TrackModel.PlaceholderCover : CoverPath;
 
-        public PlaylistEditViewModel(PlaylistService playlistService, SessionService sessionService)
+        public PlaylistEditViewModel(PlaylistService playlistService, SessionService sessionService, MediaPickerService mediaPickerService, LocalFileService localFileService)
         {
             _playlistService = playlistService;
             _sessionService = sessionService;
+            _mediaPickerService = mediaPickerService;
+            _localFileService = localFileService;
         }
 
         partial void OnPlaylistChanged(PlaylistModel? value)
@@ -82,13 +86,26 @@ namespace NMC.Client.ViewModels
                 IsBusy = false;
             }
         }
-        #endregion
 
-        #region Not implemented yet
         [RelayCommand]
-        private void PickCover()
+        private async Task PickCover()
         {
-            ShowNotImplemented("Picking a playlist cover");
+            ErrorMessage = string.Empty;
+
+            FileResult? pickedImage = await _mediaPickerService.PickImageAsync();
+            if (pickedImage is null)
+            {
+                return;
+            }
+
+            string? copiedPath = await _localFileService.CopyToAppFolderAsync(pickedImage, LocalFileService.CoversFolder);
+            if (copiedPath is null)
+            {
+                ErrorMessage = "The selected image could not be copied into the app.";
+                return;
+            }
+
+            CoverPath = copiedPath;
         }
         #endregion
     }

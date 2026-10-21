@@ -1,13 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NMC.Client.Models;
+using NMC.Client.Navigation;
+using NMC.Client.Services;
 
 namespace NMC.Client.ViewModels
 {
     public partial class AddTrackViewModel : BaseViewModel
     {
+        private readonly TrackService _trackService;
+        private readonly SessionService _sessionService;
+        private readonly MediaPickerService _mediaPickerService;
+        private readonly AudioMetadataService _audioMetadataService;
+        private readonly LocalFileService _localFileService;
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasFile))]
+        [NotifyCanExecuteChangedFor(nameof(UploadCommand))]
         private string filePath = string.Empty;
 
         [ObservableProperty]
@@ -24,23 +33,120 @@ namespace NMC.Client.ViewModels
 
         public string CoverSource => string.IsNullOrWhiteSpace(CoverPath) ? TrackModel.PlaceholderCover : CoverPath;
 
-        #region Not implemented yet
-        [RelayCommand]
-        private void PickAudioFile()
+        public AddTrackViewModel(TrackService trackService, SessionService sessionService, MediaPickerService mediaPickerService, AudioMetadataService audioMetadataService, LocalFileService localFileService)
         {
-            ShowNotImplemented("Picking an audio file");
+            _trackService = trackService;
+            _sessionService = sessionService;
+            _mediaPickerService = mediaPickerService;
+            _audioMetadataService = audioMetadataService;
+            _localFileService = localFileService;
+        }
+
+        #region Commands
+        [RelayCommand]
+        private async Task PickAudioFile()
+        {
+            ErrorMessage = string.Empty;
+
+            FileResult? pickedFile = await _mediaPickerService.PickAudioFileAsync();
+            if (pickedFile is null)
+            {
+                return;
+            }
+
+            string? copiedPath = await _localFileService.CopyToAppFolderAsync(pickedFile, LocalFileService.TracksFolder);
+            if (copiedPath is null)
+            {
+                ErrorMessage = "The selected file could not be copied into the app.";
+                return;
+            }
+
+            DiscardPickedFiles();
+            FilePath = copiedPath;
+
+            AudioMetadata metadata = _audioMetadataService.Read(copiedPath);
+
+            if (!string.IsNullOrWhiteSpace(metadata.Title))
+            {
+                Title = metadata.Title;
+            }
+
+            if (!string.IsNullOrWhiteSpace(metadata.Artist))
+            {
+                Artist = metadata.Artist;
+            }
+
+            if (metadata.CoverData != null)
+            {
+                CoverPath = await _localFileService.SaveToAppFolderAsync(metadata.CoverData, LocalFileService.CoversFolder, metadata.CoverExtension);
+            }
         }
 
         [RelayCommand]
-        private void PickCover()
+        private async Task PickCover()
         {
-            ShowNotImplemented("Picking a cover image");
+            ErrorMessage = string.Empty;
+
+            FileResult? pickedImage = await _mediaPickerService.PickImageAsync();
+            if (pickedImage is null)
+            {
+                return;
+            }
+
+            string? copiedPath = await _localFileService.CopyToAppFolderAsync(pickedImage, LocalFileService.CoversFolder);
+            if (copiedPath is null)
+            {
+                ErrorMessage = "The selected image could not be copied into the app.";
+                return;
+            }
+
+            _localFileService.DeleteAppFile(CoverPath);
+            CoverPath = copiedPath;
         }
 
-        [RelayCommand]
-        private void Upload()
+        private bool CanUpload()
         {
-            ShowNotImplemented("Uploading and analysing a track");
+            return HasFile;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanUpload))]
+        private async Task Upload()
+        {
+            ErrorMessage = string.Empty;
+            IsBusy = true;
+
+            try
+            {
+                ApiResult<TrackModel> result = await _trackService.UploadTrackAsync(_sessionService.UserId, Title, Artist, FilePath, CoverPath);
+
+                if (!result.IsSuccess || result.Data is null)
+                {
+                    ErrorMessage = result.ErrorMessage;
+                    return;
+                }
+
+                var parameters = new ShellNavigationQueryParameters
+                {
+                    { QueryKeys.Track, result.Data }
+                };
+
+                await NavigateAsync($"../{Routes.TrackDetail}", parameters);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+        #endregion
+
+        #region Support Methods
+        private void DiscardPickedFiles()
+        {
+            _localFileService.DeleteAppFile(FilePath);
+            _localFileService.DeleteAppFile(CoverPath);
+
+            FilePath = string.Empty;
+            CoverPath = null;
         }
         #endregion
     }

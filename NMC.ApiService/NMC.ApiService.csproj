@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NMC.CNTK\NMC.CNTK.csproj" />
     <ProjectReference Include="..\NMC.DataAccess\NMC.DataAccess.csproj" />
     <ProjectReference Include="..\NMC.ServiceDefaults\NMC.ServiceDefaults.csproj" />
   </ItemGroup>

@@ -97,72 +97,6 @@ namespace NMC.ApiService.Controllers
             return NoContent();
         }
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadTrack([FromBody] CreateUserTrackRequestDto dto, CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Artist))
-            {
-                return BadRequest("Title and Artist are strictly required.");
-            }
-
-            var normalizedTitle = dto.Title.Trim();
-            var normalizedArtist = dto.Artist.Trim();
-
-            var invalidValues = new[] { "unknown", "none", "null", "undefined" };
-            if (invalidValues.Contains(normalizedTitle.ToLowerInvariant()) ||
-                invalidValues.Contains(normalizedArtist.ToLowerInvariant()))
-            {
-                return BadRequest("Generic names like 'unknown' or 'none' are not allowed.");
-            }
-
-            var lowerArtist = normalizedArtist.ToLowerInvariant();
-            var existingTrackWithSameArtist = await _context.Tracks.FirstOrDefaultAsync(t => t.Artist.ToLower() == lowerArtist, cancellationToken);
-
-            string finalArtist = existingTrackWithSameArtist?.Artist ?? normalizedArtist;
-
-            var lowerTitle = normalizedTitle.ToLowerInvariant();
-            var track = await _context.Tracks.FirstOrDefaultAsync(t => t.Title.ToLower() == lowerTitle && t.Artist.ToLower() == lowerArtist, cancellationToken);
-
-            if (track == null)
-            {
-                track = new Track
-                {
-                    Title = normalizedTitle,
-                    Artist = finalArtist
-                };
-
-                _context.Tracks.Add(track);
-                await _context.SaveChangesAsync(cancellationToken);
-                await SeedDummyAnalysisScoresAsync(track.Id, cancellationToken);
-            }
-
-            var userTrack = await _context.UserTracks
-                .FirstOrDefaultAsync(ut => ut.UserId == dto.UserId && ut.TrackId == track.Id, cancellationToken);
-
-            if (userTrack != null)
-            {
-                userTrack.FilePath = dto.FilePath;
-                userTrack.CoverPath = dto.CoverPath;
-                await _context.SaveChangesAsync(cancellationToken);
-            }
-            else
-            {
-                userTrack = new UserTrack
-                {
-                    UserId = dto.UserId,
-                    TrackId = track.Id,
-                    FilePath = dto.FilePath,
-                    CoverPath = dto.CoverPath
-                };
-
-                _context.UserTracks.Add(userTrack);
-                await _context.SaveChangesAsync(cancellationToken);
-            }
-
-            var responseDto = await FetchUserTrackByIdAsync(userTrack.Id);
-            return Ok(responseDto);
-        }
-
         #region Support Methods
 
         private async Task<List<UserTrackDto>> FetchTracksByUserIdAsync(int userId)
@@ -244,25 +178,6 @@ namespace NMC.ApiService.Controllers
                     ut.Track.GenreScores.Select(gs => new GenreScoreDto(gs.GenreId, gs.Genre.Name, gs.Score)).ToList(),
                     ut.Track.AcousticScores.Select(acs => new AcousticScoreDto(acs.AttributeId, acs.Attribute.Name, acs.Score)).ToList()
                 )).ToListAsync();
-        }
-
-        private async Task SeedDummyAnalysisScoresAsync(int trackId, CancellationToken cancellationToken)
-        {
-            var genres = await _context.Genres.ToListAsync(cancellationToken);
-            if (genres.Any())
-            {
-                var random = new Random();
-                foreach (var genre in genres)
-                {
-                    _context.GenreScores.Add(new GenreScore
-                    {
-                        TrackId = trackId,
-                        GenreId = genre.Id,
-                        Score = (float)Math.Round(random.NextDouble(), 2)
-                    });
-                }
-                await _context.SaveChangesAsync(cancellationToken);
-            }
         }
 
         #endregion
