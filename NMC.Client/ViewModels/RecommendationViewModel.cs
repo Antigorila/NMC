@@ -10,21 +10,26 @@ namespace NMC.Client.ViewModels
     public partial class RecommendationViewModel : BaseViewModel
     {
         private readonly PlaylistService _playlistService;
+        private readonly RecommendationService _recommendationService;
         private readonly SessionService _sessionService;
+
+        private string _lastReferenceName = string.Empty;
 
         public ObservableCollection<PlaylistModel> ReferencePlaylists { get; } = new();
 
         public ObservableCollection<TrackModel> Results { get; } = new();
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(GenerateCommand))]
         private PlaylistModel? selectedReference;
 
         [ObservableProperty]
         private TrackModel? selectedResult;
 
-        public RecommendationViewModel(PlaylistService playlistService, SessionService sessionService)
+        public RecommendationViewModel(PlaylistService playlistService, RecommendationService recommendationService, SessionService sessionService)
         {
             _playlistService = playlistService;
+            _recommendationService = recommendationService;
             _sessionService = sessionService;
         }
 
@@ -82,17 +87,71 @@ namespace NMC.Client.ViewModels
         }
         #endregion
 
-        #region Not implemented yet
-        [RelayCommand]
-        private void Generate()
+        #region Commands
+        private bool CanGenerate()
         {
-            ShowNotImplemented("Generating recommendations");
+            return SelectedReference != null;
         }
 
-        [RelayCommand]
-        private void SaveAsPlaylist()
+        [RelayCommand(CanExecute = nameof(CanGenerate))]
+        private async Task Generate()
         {
-            ShowNotImplemented("Saving recommendations as a playlist");
+            ErrorMessage = string.Empty;
+            IsBusy = true;
+
+            try
+            {
+                ApiResult<List<TrackModel>> result = await _recommendationService.GenerateAsync(_sessionService.UserId, SelectedReference!.Id);
+
+                if (!result.IsSuccess || result.Data is null)
+                {
+                    ErrorMessage = result.ErrorMessage;
+                    return;
+                }
+
+                Results.Clear();
+                foreach (TrackModel track in result.Data)
+                {
+                    Results.Add(track);
+                }
+
+                _lastReferenceName = SelectedReference.Name;
+                SaveAsPlaylistCommand.NotifyCanExecuteChanged();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private bool CanSaveAsPlaylist()
+        {
+            return Results.Count > 0;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanSaveAsPlaylist))]
+        private async Task SaveAsPlaylist()
+        {
+            ErrorMessage = string.Empty;
+            IsBusy = true;
+
+            try
+            {
+                string playlistName = $"Based on {_lastReferenceName}";
+                ApiResult<PlaylistModel> result = await _playlistService.CreatePlaylistWithTracksAsync(_sessionService.UserId, playlistName, Results);
+
+                if (!result.IsSuccess || result.Data is null)
+                {
+                    ErrorMessage = result.ErrorMessage;
+                    return;
+                }
+
+                ShowAlert("Playlist saved", $"\"{result.Data.Name}\" was created with {result.Data.TrackCount} tracks.");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
         #endregion
     }

@@ -31,4 +31,5 @@
     public record GenreScoreDto(int GenreId, string GenreName, double Score);
     public record AcousticScoreDto(int AttributeId, string AttributeName, double Score);
     public record UpdateCoverDto(string CoverPath);
+    public record TrackFilterDto(int GenreId, bool IsHardFilter, double Threshold);
 }

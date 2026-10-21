@@ -70,6 +70,32 @@ namespace NMC.Client.Services
             return await DeleteAsync($"api/playlists/{playlistId}/tracks/{userTrackId}");
         }
 
+        public async Task<ApiResult<PlaylistModel>> CreatePlaylistWithTracksAsync(int userId, string name, IEnumerable<TrackModel> tracks)
+        {
+            ApiResult<PlaylistModel> created = await CreatePlaylistAsync(userId, name, null);
+
+            if (!created.IsSuccess || created.Data is null)
+            {
+                return created;
+            }
+
+            int addedCount = 0;
+            foreach (TrackModel track in tracks)
+            {
+                ApiResult added = await AddTrackAsync(created.Data.Id, track.UserTrackId);
+
+                if (!added.IsSuccess)
+                {
+                    return ApiResult<PlaylistModel>.Failure(added.ErrorMessage);
+                }
+
+                addedCount++;
+            }
+
+            created.Data.TrackCount = addedCount;
+            return created;
+        }
+
         #region Support Methods
         private static ApiResult<PlaylistModel> ToPlaylistResult(ApiResult<PlaylistDto> result)
         {

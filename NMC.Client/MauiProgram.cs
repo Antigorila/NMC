@@ -46,6 +46,7 @@ namespace NMC.Client
             services.AddSingleton<TrackService>();
             services.AddSingleton<PlaylistService>();
             services.AddSingleton<MetadataService>();
+            services.AddSingleton<RecommendationService>();
         }
 
         private static void RegisterViewModels(IServiceCollection services)

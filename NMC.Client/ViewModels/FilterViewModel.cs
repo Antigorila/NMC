@@ -10,12 +10,18 @@ namespace NMC.Client.ViewModels
     public partial class FilterViewModel : BaseViewModel
     {
         private readonly MetadataService _metadataService;
+        private readonly TrackService _trackService;
+        private readonly PlaylistService _playlistService;
+        private readonly SessionService _sessionService;
+
+        private string _lastFilterName = string.Empty;
 
         public ObservableCollection<CategoryModel> Genres { get; } = new();
 
         public ObservableCollection<TrackModel> Results { get; } = new();
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(ApplyFilterCommand))]
         private CategoryModel? selectedGenre;
 
         [ObservableProperty]
@@ -44,9 +50,12 @@ namespace NMC.Client.ViewModels
             }
         }
 
-        public FilterViewModel(MetadataService metadataService)
+        public FilterViewModel(MetadataService metadataService, TrackService trackService, PlaylistService playlistService, SessionService sessionService)
         {
             _metadataService = metadataService;
+            _trackService = trackService;
+            _playlistService = playlistService;
+            _sessionService = sessionService;
         }
 
         partial void OnSelectedResultChanged(TrackModel? value)
@@ -107,17 +116,84 @@ namespace NMC.Client.ViewModels
         }
         #endregion
 
-        #region Not implemented yet
-        [RelayCommand]
-        private void ApplyFilter()
+        #region Commands
+        private bool CanApplyFilter()
         {
-            ShowNotImplemented("Filtering by genre");
+            return SelectedGenre != null;
         }
 
-        [RelayCommand]
-        private void SaveAsPlaylist()
+        [RelayCommand(CanExecute = nameof(CanApplyFilter))]
+        private async Task ApplyFilter()
         {
-            ShowNotImplemented("Saving the filter result as a playlist");
+            ErrorMessage = string.Empty;
+            IsBusy = true;
+
+            try
+            {
+                ApiResult<List<TrackModel>> result = await _trackService.FilterTracksAsync(_sessionService.UserId, SelectedGenre!.Id, IsHardFilter, Threshold);
+
+                if (!result.IsSuccess || result.Data is null)
+                {
+                    ErrorMessage = result.ErrorMessage;
+                    return;
+                }
+
+                Results.Clear();
+                foreach (TrackModel track in result.Data)
+                {
+                    Results.Add(track);
+                }
+
+                _lastFilterName = BuildFilterName();
+                SaveAsPlaylistCommand.NotifyCanExecuteChanged();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private bool CanSaveAsPlaylist()
+        {
+            return Results.Count > 0;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanSaveAsPlaylist))]
+        private async Task SaveAsPlaylist()
+        {
+            ErrorMessage = string.Empty;
+            IsBusy = true;
+
+            try
+            {
+                ApiResult<PlaylistModel> result = await _playlistService.CreatePlaylistWithTracksAsync(_sessionService.UserId, _lastFilterName, Results);
+
+                if (!result.IsSuccess || result.Data is null)
+                {
+                    ErrorMessage = result.ErrorMessage;
+                    return;
+                }
+
+                ShowAlert("Playlist saved", $"\"{result.Data.Name}\" was created with {result.Data.TrackCount} tracks.");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+        #endregion
+
+        #region Support Methods
+        private string BuildFilterName()
+        {
+            string genreName = SelectedGenre?.Name ?? "Filter";
+
+            if (IsHardFilter)
+            {
+                return $"{genreName} (hard filter)";
+            }
+
+            return $"{genreName} (soft filter, {Threshold:P0})";
         }
         #endregion
     }
