@@ -85,11 +85,14 @@
 		<MauiImage Update="Resources\Images\logout.svg" TintColor="#F4F4F5" BaseSize="24,24" />
 		<MauiImage Update="Resources\Images\chevron_right.svg" TintColor="#F4F4F5" BaseSize="24,24" />
 		<MauiImage Update="Resources\Images\delete.svg" TintColor="#F87171" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\shuffle_on.svg" TintColor="#8B5CF6" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\shuffle_off.svg" TintColor="#71717A" BaseSize="24,24" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="TagLibSharp" Version="2.3.0" />
+		<PackageReference Include="Plugin.Maui.Audio" Version="3.0.1" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.110" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.13" />
 	</ItemGroup>

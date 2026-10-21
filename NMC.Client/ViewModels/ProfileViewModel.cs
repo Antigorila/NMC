@@ -10,6 +10,7 @@ namespace NMC.Client.ViewModels
     {
         private readonly AuthService _authService;
         private readonly SessionService _sessionService;
+        private readonly PlayerViewModel _playerViewModel;
 
         [ObservableProperty]
         private string username = string.Empty;
@@ -20,10 +21,11 @@ namespace NMC.Client.ViewModels
         [ObservableProperty]
         private string newPassword = string.Empty;
 
-        public ProfileViewModel(AuthService authService, SessionService sessionService)
+        public ProfileViewModel(AuthService authService, SessionService sessionService, PlayerViewModel playerViewModel)
         {
             _authService = authService;
             _sessionService = sessionService;
+            _playerViewModel = playerViewModel;
             Username = _sessionService.Username;
         }
 
@@ -104,6 +106,7 @@ namespace NMC.Client.ViewModels
                     return;
                 }
 
+                _playerViewModel.Stop();
                 _sessionService.Clear();
                 await NavigateAsync(Routes.LoginRoot);
             }
@@ -116,6 +119,7 @@ namespace NMC.Client.ViewModels
         [RelayCommand]
         private async Task Logout()
         {
+            _playerViewModel.Stop();
             _sessionService.Clear();
             await NavigateAsync(Routes.LoginRoot);
         }

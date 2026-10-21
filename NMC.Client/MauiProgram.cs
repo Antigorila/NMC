@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Plugin.Maui.Audio;
 using NMC.Client.Services;
 using NMC.Client.ViewModels;
 using NMC.Client.Views;
@@ -41,6 +42,8 @@ namespace NMC.Client
 
             services.AddSingleton(httpClient);
             services.AddSingleton<SessionService>();
+            services.AddSingleton<IAudioManager>(AudioManager.Current);
+            services.AddSingleton<AudioPlayerService>();
             services.AddSingleton<LocalFileService>();
             services.AddSingleton<MediaPickerService>();
             services.AddSingleton<AudioMetadataService>();

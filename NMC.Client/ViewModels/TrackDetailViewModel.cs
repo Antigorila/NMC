@@ -15,6 +15,7 @@ namespace NMC.Client.ViewModels
         private readonly SessionService _sessionService;
         private readonly LocalFileService _localFileService;
         private readonly MediaPickerService _mediaPickerService;
+        private readonly PlayerViewModel _playerViewModel;
 
         public ObservableCollection<PlaylistModel> Playlists { get; } = new();
 
@@ -26,13 +27,14 @@ namespace NMC.Client.ViewModels
         [NotifyCanExecuteChangedFor(nameof(AddToPlaylistCommand))]
         private PlaylistModel? selectedPlaylist;
 
-        public TrackDetailViewModel(PlaylistService playlistService, TrackService trackService, SessionService sessionService, LocalFileService localFileService, MediaPickerService mediaPickerService)
+        public TrackDetailViewModel(PlaylistService playlistService, TrackService trackService, SessionService sessionService, LocalFileService localFileService, MediaPickerService mediaPickerService, PlayerViewModel playerViewModel)
         {
             _playlistService = playlistService;
             _trackService = trackService;
             _sessionService = sessionService;
             _localFileService = localFileService;
             _mediaPickerService = mediaPickerService;
+            _playerViewModel = playerViewModel;
         }
 
         #region Loading
@@ -117,6 +119,17 @@ namespace NMC.Client.ViewModels
         }
 
         [RelayCommand]
+        private void Play()
+        {
+            if (Track is null)
+            {
+                return;
+            }
+
+            _playerViewModel.PlayTrack(Track);
+        }
+
+        [RelayCommand]
         private async Task ChangeCover()
         {
             if (Track is null)
@@ -154,12 +167,6 @@ namespace NMC.Client.ViewModels
         #endregion
 
         #region Not implemented yet
-        [RelayCommand]
-        private void Play()
-        {
-            ShowNotImplemented("Playback");
-        }
-
         [RelayCommand]
         private void Share()
         {

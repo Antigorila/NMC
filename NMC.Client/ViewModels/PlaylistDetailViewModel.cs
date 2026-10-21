@@ -10,6 +10,7 @@ namespace NMC.Client.ViewModels
     public partial class PlaylistDetailViewModel : BaseViewModel
     {
         private readonly PlaylistService _playlistService;
+        private readonly PlayerViewModel _playerViewModel;
 
         [ObservableProperty]
         private PlaylistModel? playlist;
@@ -17,9 +18,10 @@ namespace NMC.Client.ViewModels
         [ObservableProperty]
         private TrackModel? selectedTrack;
 
-        public PlaylistDetailViewModel(PlaylistService playlistService)
+        public PlaylistDetailViewModel(PlaylistService playlistService, PlayerViewModel playerViewModel)
         {
             _playlistService = playlistService;
+            _playerViewModel = playerViewModel;
         }
 
         partial void OnSelectedTrackChanged(TrackModel? value)
@@ -96,6 +98,19 @@ namespace NMC.Client.ViewModels
 
         #region Commands
         [RelayCommand]
+        private void PlayAll()
+        {
+            if (Playlist is null || Playlist.Tracks.Count == 0)
+            {
+                ErrorMessage = "This playlist has no tracks to play.";
+                return;
+            }
+
+            ErrorMessage = string.Empty;
+            _playerViewModel.PlayTracks(Playlist.Tracks);
+        }
+
+        [RelayCommand]
         private async Task RemoveTrack(TrackModel track)
         {
             if (Playlist is null)
@@ -154,12 +169,6 @@ namespace NMC.Client.ViewModels
         #endregion
 
         #region Not implemented yet
-        [RelayCommand]
-        private void PlayAll()
-        {
-            ShowNotImplemented("Playing a playlist");
-        }
-
         [RelayCommand]
         private void AddTracks()
         {
