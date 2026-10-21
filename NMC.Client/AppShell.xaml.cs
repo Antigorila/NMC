@@ -30,6 +30,7 @@ namespace NMC.Client
             Routing.RegisterRoute(Routes.Recommendation, typeof(RecommendationPage));
             Routing.RegisterRoute(Routes.Profile, typeof(ProfilePage));
             Routing.RegisterRoute(Routes.NowPlaying, typeof(NowPlayingPage));
+            Routing.RegisterRoute(Routes.SelectTracks, typeof(SelectTracksPage));
         }
 
         private async void OnAlertMessageReceived(object recipient, AlertMessage message)

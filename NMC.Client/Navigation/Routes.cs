@@ -21,6 +21,7 @@
         public const string Recommendation = "RecommendationPage";
         public const string Profile = "ProfilePage";
         public const string NowPlaying = "NowPlayingPage";
+        public const string SelectTracks = "SelectTracksPage";
         #endregion
     }
 }

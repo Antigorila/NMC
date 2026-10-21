@@ -166,13 +166,21 @@ namespace NMC.Client.ViewModels
                 IsBusy = false;
             }
         }
-        #endregion
 
-        #region Not implemented yet
         [RelayCommand]
-        private void AddTracks()
+        private async Task AddTracks()
         {
-            ShowNotImplemented("Adding several tracks to a playlist");
+            if (Playlist is null)
+            {
+                return;
+            }
+
+            var parameters = new ShellNavigationQueryParameters
+            {
+                { QueryKeys.Playlist, Playlist }
+            };
+
+            await NavigateAsync(Routes.SelectTracks, parameters);
         }
         #endregion
     }

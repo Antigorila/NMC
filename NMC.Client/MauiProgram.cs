@@ -69,6 +69,7 @@ namespace NMC.Client
             services.AddTransient<FilterViewModel>();
             services.AddTransient<RecommendationViewModel>();
             services.AddTransient<ProfileViewModel>();
+            services.AddTransient<SelectTracksViewModel>();
         }
 
         private static void RegisterPages(IServiceCollection services)
@@ -87,6 +88,7 @@ namespace NMC.Client
             services.AddTransient<RecommendationPage>();
             services.AddTransient<ProfilePage>();
             services.AddTransient<NowPlayingPage>();
+            services.AddTransient<SelectTracksPage>();
         }
         #endregion
     }

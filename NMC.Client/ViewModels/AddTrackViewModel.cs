@@ -14,6 +14,8 @@ namespace NMC.Client.ViewModels
         private readonly AudioMetadataService _audioMetadataService;
         private readonly LocalFileService _localFileService;
 
+        private bool _isUploaded;
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasFile))]
         [NotifyCanExecuteChangedFor(nameof(UploadCommand))]
@@ -125,6 +127,8 @@ namespace NMC.Client.ViewModels
                     return;
                 }
 
+                _isUploaded = true;
+
                 var parameters = new ShellNavigationQueryParameters
                 {
                     { QueryKeys.Track, result.Data }
@@ -138,6 +142,16 @@ namespace NMC.Client.ViewModels
             }
         }
         #endregion
+
+        public void DiscardUnsavedFiles()
+        {
+            if (_isUploaded)
+            {
+                return;
+            }
+
+            DiscardPickedFiles();
+        }
 
         #region Support Methods
         private void DiscardPickedFiles()

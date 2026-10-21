@@ -70,6 +70,25 @@ namespace NMC.Client.Services
             return await DeleteAsync($"api/playlists/{playlistId}/tracks/{userTrackId}");
         }
 
+        public async Task<ApiResult<int>> AddTracksAsync(int playlistId, IEnumerable<TrackModel> tracks)
+        {
+            int addedCount = 0;
+
+            foreach (TrackModel track in tracks)
+            {
+                ApiResult added = await AddTrackAsync(playlistId, track.UserTrackId);
+
+                if (!added.IsSuccess)
+                {
+                    return ApiResult<int>.Failure(added.ErrorMessage);
+                }
+
+                addedCount++;
+            }
+
+            return ApiResult<int>.Success(addedCount);
+        }
+
         public async Task<ApiResult<PlaylistModel>> CreatePlaylistWithTracksAsync(int userId, string name, IEnumerable<TrackModel> tracks)
         {
             ApiResult<PlaylistModel> created = await CreatePlaylistAsync(userId, name, null);
@@ -79,20 +98,14 @@ namespace NMC.Client.Services
                 return created;
             }
 
-            int addedCount = 0;
-            foreach (TrackModel track in tracks)
+            ApiResult<int> added = await AddTracksAsync(created.Data.Id, tracks);
+
+            if (!added.IsSuccess)
             {
-                ApiResult added = await AddTrackAsync(created.Data.Id, track.UserTrackId);
-
-                if (!added.IsSuccess)
-                {
-                    return ApiResult<PlaylistModel>.Failure(added.ErrorMessage);
-                }
-
-                addedCount++;
+                return ApiResult<PlaylistModel>.Failure(added.ErrorMessage);
             }
 
-            created.Data.TrackCount = addedCount;
+            created.Data.TrackCount = added.Data;
             return created;
         }
 
