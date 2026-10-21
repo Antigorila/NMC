@@ -55,7 +55,7 @@
                                         Source="close.png"
                                         Style="{StaticResource GhostIconButton}"
                                         VerticalOptions="Center"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistDetailViewModel}}, Path=RemoveTrackCommand, x:DataType=vm:PlaylistDetailViewModel}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlaylistDetailViewModel}}, Path=RemoveTrackCommand, x:DataType={x:Null}}"
                                         CommandParameter="{Binding .}" />
                             </Grid>
                         </Border>
