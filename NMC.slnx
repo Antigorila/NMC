@@ -7,7 +7,7 @@
   <Project Path="NMC.Client/NMC.Client.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
-  <Project Path="NMC.CNTK/NMC.CNTK.csproj" Id="5f1253a9-d7c7-419c-9f02-a168f5581d54" />
+  <Project Path="NMC.CNTK/NMC.NeuralNetwork.csproj" Id="5f1253a9-d7c7-419c-9f02-a168f5581d54" />
   <Project Path="NMC.DataAccess/NMC.DataAccess.csproj" Id="65df9581-1c01-4281-a5b5-210d3fab9810" />
   <Project Path="NMC.ServiceDefaults/NMC.ServiceDefaults.csproj" />
 </Solution>

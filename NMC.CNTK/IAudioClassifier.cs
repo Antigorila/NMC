@@ -1,4 +1,4 @@
-﻿namespace NMC.CNTK
+﻿namespace NMC.NeuralNetwork
 {
     public interface IAudioClassifier
     {
