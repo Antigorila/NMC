@@ -27,7 +27,8 @@
                 <FlexLayout Wrap="Wrap" JustifyContent="Center">
                     <Button Text="Play" ImageSource="play.png" Command="{Binding PlayCommand}" Style="{StaticResource PrimaryButton}" Margin="4" />
                     <Button Text="Change cover" ImageSource="image.png" Command="{Binding ChangeCoverCommand}" Style="{StaticResource ChipButton}" Margin="4" />
-                    <Button Text="Share" ImageSource="share.png" Command="{Binding ShareCommand}" Style="{StaticResource ChipButton}" Margin="4" />
+                    <Button Text="Share" ImageSource="share.png" Command="{Binding ShareAnalysisCommand}" Style="{StaticResource ChipButton}" Margin="4" />
+                    <Button Text="Share file" ImageSource="share.png" Command="{Binding ShareAudioFileCommand}" Style="{StaticResource ChipButton}" Margin="4" />
                     <Button Text="Delete" ImageSource="delete.png" Command="{Binding DeleteTrackCommand}" Style="{StaticResource DangerButton}" Margin="4" />
                 </FlexLayout>
 

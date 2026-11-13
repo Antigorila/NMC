@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NMC.Client.Models;
@@ -166,11 +167,95 @@ namespace NMC.Client.ViewModels
         }
         #endregion
 
-        #region Not implemented yet
+        #region Sharing
         [RelayCommand]
-        private void Share()
+        private async Task ShareAnalysis()
         {
-            ShowNotImplemented("Sharing the analysis");
+            if (Track is null)
+            {
+                return;
+            }
+
+            if (!HasInternetAccess())
+            {
+                return;
+            }
+
+            try
+            {
+                await Share.Default.RequestAsync(new ShareTextRequest
+                {
+                    Title = "Share track",
+                    Text = CreateShareText(Track)
+                });
+            }
+            catch (Exception ex)
+            {
+                ShowAlert("Sharing failed", ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        private async Task ShareAudioFile()
+        {
+            if (Track is null)
+            {
+                return;
+            }
+
+            if (Track.IsFileMissing)
+            {
+                ShowAlert("File missing", "The audio file is not on this device.");
+                return;
+            }
+
+            if (!HasInternetAccess())
+            {
+                return;
+            }
+
+            try
+            {
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = Track.DisplayName,
+                    File = new ShareFile(Track.FilePath)
+                });
+            }
+            catch (Exception ex)
+            {
+                ShowAlert("Sharing failed", ex.Message);
+            }
+        }
+
+        private static string CreateShareText(TrackModel track)
+        {
+            var text = new StringBuilder();
+            text.AppendLine(track.DisplayName);
+
+            if (track.GenreScores.Count > 0)
+            {
+                text.AppendLine();
+                text.AppendLine("Genres:");
+                foreach (ScoreModel score in track.GenreScores)
+                {
+                    text.AppendLine($"- {score.Name}: {score.Percent}%");
+                }
+            }
+
+            if (track.AcousticScores.Count > 0)
+            {
+                text.AppendLine();
+                text.AppendLine("Acoustic attributes:");
+                foreach (ScoreModel score in track.AcousticScores)
+                {
+                    text.AppendLine($"- {score.Name}: {score.Percent}%");
+                }
+            }
+
+            text.AppendLine();
+            text.AppendLine("Analysed by NMC");
+            return text.ToString();
         }
         #endregion
     }
