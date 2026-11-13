@@ -8,5 +8,6 @@
     <Deploy Solution="Debug|*" />
   </Project>
   <Project Path="NMC.DataAccess/NMC.DataAccess.csproj" Id="65df9581-1c01-4281-a5b5-210d3fab9810" />
+  <Project Path="NMC.NeuralNetwork/NMC.NeuralNetwork.csproj" Id="07232089-a043-4cdb-99f2-d6f9aafd9528" />
   <Project Path="NMC.ServiceDefaults/NMC.ServiceDefaults.csproj" />
 </Solution>

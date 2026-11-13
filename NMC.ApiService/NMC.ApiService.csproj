@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NMC.DataAccess\NMC.DataAccess.csproj" />
+    <ProjectReference Include="..\NMC.NeuralNetwork\NMC.NeuralNetwork.csproj" />
     <ProjectReference Include="..\NMC.ServiceDefaults\NMC.ServiceDefaults.csproj" />
   </ItemGroup>
 
