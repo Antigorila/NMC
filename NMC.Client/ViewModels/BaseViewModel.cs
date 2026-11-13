@@ -57,9 +57,15 @@ namespace NMC.Client.ViewModels
             WeakReferenceMessenger.Default.Send(new AlertMessage(title, message));
         }
 
-        protected void ShowNotImplemented(string feature)
+        protected bool HasInternetAccess()
         {
-            ShowAlert("Not implemented yet", $"{feature} will be implemented in a later step.");
+            if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
+            {
+                return true;
+            }
+
+            ShowAlert("No internet", "There is no internet connection. Check your network and try again.");
+            return false;
         }
 
         protected async Task<bool> ConfirmAsync(string title, string message)
