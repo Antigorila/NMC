@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NMC.ApiService.DTO;
-using NMC.CNTK;
 using NMC.DataAccess;
+using NMC.NeuralNetwork;
 using NMC.DataAccess.Models;
 
 namespace NMC.ApiService.Controllers

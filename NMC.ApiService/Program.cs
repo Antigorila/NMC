@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NMC.DataAccess;
-using NMC.CNTK;
+using NMC.NeuralNetwork;
 
 var builder = WebApplication.CreateBuilder(args);
 

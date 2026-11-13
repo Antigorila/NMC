@@ -1,4 +1,4 @@
-﻿using NMC.CNTK;
+﻿using NMC.NeuralNetwork;
 
 namespace ApiTests
 {
