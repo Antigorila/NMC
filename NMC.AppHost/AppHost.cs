@@ -5,7 +5,7 @@ var password = builder.AddParameter("sql-password", "NMC-Database-Password123", 
 var sqlServer = builder.AddSqlServer("sqlserver", password)
                        .WithImage("mssql/server", "2019-latest")
                        .WithHostPort(1433)
-                       .WithDataVolume();
+                       .WithDataVolume("nmc-clean-data");
 
 var database = sqlServer.AddDatabase("NmcDb");
 
