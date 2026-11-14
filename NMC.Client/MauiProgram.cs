@@ -45,6 +45,7 @@ namespace NMC.Client
             services.AddSingleton<IAudioManager>(AudioManager.Current);
             services.AddSingleton<AudioPlayerService>();
             services.AddSingleton<LocalFileService>();
+            services.AddSingleton<DemoDataService>();
             services.AddSingleton<MediaPickerService>();
             services.AddSingleton<AudioMetadataService>();
             services.AddSingleton<AuthService>();

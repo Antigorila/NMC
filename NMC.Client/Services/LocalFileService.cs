@@ -54,6 +54,11 @@
                 return;
             }
 
+            if (DemoDataService.IsDemoFile(filePath))
+            {
+                return;
+            }
+
             try
             {
                 if (File.Exists(filePath))
