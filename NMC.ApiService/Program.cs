@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NMC.ApiService.Demo;
 using NMC.DataAccess;
 using NMC.NeuralNetwork;
 
@@ -32,6 +33,7 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<NmcDbContext>();
     DbInitializer.Initialize(dbContext);
+    DemoDataSeeder.Seed(dbContext);
 }
 
 // Configure the HTTP request pipeline.

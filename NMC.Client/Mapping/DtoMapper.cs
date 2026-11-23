@@ -1,5 +1,6 @@
 ﻿using NMC.Client.DTO;
 using NMC.Client.Models;
+using NMC.Client.Services;
 
 namespace NMC.Client.Mapping
 {
@@ -19,8 +20,8 @@ namespace NMC.Client.Mapping
                 TrackId = dto.TrackId,
                 Title = dto.Title,
                 Artist = dto.Artist,
-                FilePath = dto.FilePath,
-                CoverPath = dto.CoverPath,
+                FilePath = DemoDataService.ResolvePath(dto.FilePath),
+                CoverPath = DemoDataService.ResolveOptionalPath(dto.CoverPath),
                 GenreScores = MapScores(dto.GenreScores, s => s.ToModel()),
                 AcousticScores = MapScores(dto.AcousticScores, s => s.ToModel())
             };
@@ -32,7 +33,7 @@ namespace NMC.Client.Mapping
             {
                 Id = dto.Id,
                 Name = dto.PlaylistName,
-                CoverPath = dto.CoverPath,
+                CoverPath = DemoDataService.ResolveOptionalPath(dto.CoverPath),
                 TrackCount = dto.TrackCount
             };
 
@@ -42,7 +43,7 @@ namespace NMC.Client.Mapping
             {
                 Id = dto.Id,
                 Name = dto.PlaylistName,
-                CoverPath = dto.CoverPath
+                CoverPath = DemoDataService.ResolveOptionalPath(dto.CoverPath)
             };
 
             foreach (var track in dto.Tracks ?? [])
